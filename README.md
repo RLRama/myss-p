@@ -6,7 +6,7 @@ Solución universal para problemas de la parte práctica de Modelos y Simulació
 
 - Universidad Nacional de La Rioja
 - 45: Modelos y Simulación de Sistemas
-- Integrantes
+- Integrantes: 
 `
 Cano Angel Rodrigo, Dominguez Sotomayor Santiago Ismael y Rios Lopez Ramiro Ignacio
 `
