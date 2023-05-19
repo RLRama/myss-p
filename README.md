@@ -8,9 +8,7 @@ Solución universal para problemas de la parte práctica de Modelos y Simulació
 - 45: Modelos y Simulación de Sistemas
 - Integrantes
 `
-Cano Angel Rodrigo
-Dominguez Sotomayor Santiago Ismael
-Rios Lopez Ramiro Ignacio
+Cano Angel Rodrigo, Dominguez Sotomayor Santiago Ismael y Rios Lopez Ramiro Ignacio
 `
 
 ## Herramientas y lenguajes
