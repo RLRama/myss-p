@@ -1,2 +1,24 @@
-# myss-p
-Práctica | Modelos y Simulación de Sistemas | UNLaR
+# Práctica - Modelos y Simulación de Sistemas
+
+Solución universal para problemas de la parte práctica de Modelos y Simulación de Sistemas
+
+## Académico
+
+- Universidad Nacional de La Rioja
+- 45: Modelos y Simulación de Sistemas
+- Integrantes
+1. Cano Angel Rodrigo
+2. Dominguez Sotomayor Santiago Ismael
+3. Rios Lopez Ramiro Ignacio
+
+## Herramientas y lenguajes
+
+- Python
+- Streamlit
+
+## Problemas y soluciones
+### Problema I
+- Intervalo de llegada de cliente aleatorio (ingresables)
+- Intervalo de tiempo de servicio aleatorio (ingresables)
+- El servidor no abandona el puesto de servicio
+- Los clientes hacen cola de tiempo indefinido
