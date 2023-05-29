@@ -19,15 +19,15 @@ with st.sidebar:
     st.header("⌨️")
     st.subheader("Configurar parámetros")
     t_arr = st.slider(
-        "Intervalo de llegada de clientes (min)",
+        "Intervalo de llegada de clientes `(min)`",
         value=[1,60]
     )
     t_serv = st.slider(
-        "Intervalo de tiempo de servicio (min)",
+        "Intervalo de tiempo de servicio `(min)`",
         value=[1,60]
     )
     t = st.number_input(
-        "Duración de la simulación",
+        "Duración de la simulación `(min)`",
         min_value=1
     )
 
