@@ -18,6 +18,10 @@ st.set_page_config(
 with st.sidebar:
     st.header("⌨️")
     st.subheader("Configurar parámetros")
+    arrTimes = st.slider(
+        "Intervalo de llegada de clientes (min)",
+        value=[1,60]
+    )
 
 st.markdown(
     """
@@ -25,12 +29,13 @@ st.markdown(
     ## Descripción
     - Obedece al problema n° 1
     - Clientes que llegan individualmente en intervalos aleatorios
-    - Cola FIFO
+    - Cola FIFO (los clientes son atendidos en el orden que llegan)
     - Tiempos de prestación de servicios aleatorios
     - El servidor no abandona el puesto de servicio
 
     ## Uso
-    - Configure parámetros usando la **barra lateral** para dar valores
+    - Configure parámetros usando la **👈 barra lateral** para dar valores
     - Presione el botón **'Simular'** para mostrar la tabla de simulación generada
     """
 )
+
