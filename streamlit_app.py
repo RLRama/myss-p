@@ -1,6 +1,6 @@
 import streamlit as st
 import random as rnd
-from SimPy.Simulation import *
+from simpy.simulation import *
 
 # Barra lateral
 with st.sidebar:
