@@ -72,7 +72,7 @@ st.markdown(
 customersMinArrTime = st.number_input("Mínimo")
 customersMaxArrTime = st.number_input("Máximo")
 customersArrTimeDistr = st.radio(
-    "Distribución de probabilidad",
+    "Distribución de probabilidad de tiempo de llegada",
     ('Normal', 'Uniforme')
     )
 
@@ -82,9 +82,9 @@ st.markdown(
     Intervalos de tiempo de servicio
 """
 )
-serviceMinTime = st.number_input("Mínimo1")
-serviceMaxTime = st.number_input("Máximo1")
+serviceMinTime = st.number_input("Mínimo")
+serviceMaxTime = st.number_input("Máximo")
 serviceTimeDistr = st.radio(
-    "Distribución de probabilidadx",
+    "Distribución de probabilidad de tiempo de servicio",
     ('Normal', 'Uniforme')
     )
