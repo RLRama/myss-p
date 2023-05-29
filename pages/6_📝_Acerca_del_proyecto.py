@@ -12,7 +12,6 @@ st.markdown(
     - Año 2023
     """
     )
-
 st.header("Académico")
 st.markdown(
         """
@@ -22,7 +21,6 @@ st.markdown(
     - 45: Modelos y Simulación de Sistemas
     """
     )
-    
 st.header("Nosotros")
 st.markdown(
         """
@@ -31,7 +29,6 @@ st.markdown(
     - Rios Lopez Ramiro Ignacio | EISI-801    
     """
     )
-
 st.header("Herramientas utilizadas")
 st.markdown(
         """
