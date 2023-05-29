@@ -83,10 +83,17 @@ st.markdown(
     Intervalo de tiempo de servicio
 """
 )
-serviceMinTime = st.number_input("Límite inferior de tiempo de servicio")
-serviceMaxTime = st.number_input("Límite superior de tiempo de servicio")
-serviceTimeDistr = st.radio(
+serverMinWorkTime = st.number_input("Límite inferior de tiempo de servicio")
+serverMaxWorkTime = st.number_input("Límite superior de tiempo de servicio")
+serverWorkTimeDistr = st.radio(
     "Distribución de probabilidad de tiempo de servicio",
     ('Normal', 'Uniforme')
     )
-
+serverLeaves = st.checkbox('¿El servidor abandona la cola?')
+st.caption("Ignorar si el servidor no abandona la cola")
+serverMinLeaveTime = st.number_input("Límite inferior de tiempo de abandono")
+serverMaxLeaveTime = st.number_input("Límite superior de tiempo de abandono")
+serverLeaveTimeDistr = st.radio(
+    "Distribución de probabilidad de tiempo de abandono",
+    ('Normal', 'Uniforme')
+    )
