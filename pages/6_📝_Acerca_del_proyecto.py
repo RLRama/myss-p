@@ -1,3 +1,9 @@
+import streamlit as st
+import random as rnd
+import simpy as sp
+import numpy as np
+import pandas as pd
+
 st.header("Descripción")
 st.markdown(
     """
@@ -32,5 +38,6 @@ st.markdown(
     - Python
     - Streamlit
     - SimPy
+    - Pandas
     """
     )
