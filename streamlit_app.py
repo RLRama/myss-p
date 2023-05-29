@@ -2,6 +2,17 @@ import streamlit as st
 import random as rnd
 import simpy as sp
 
+# Configurar página
+st.set_page_config(
+    page_title="Simulación de colas",
+    page_icon="⚙️",
+    layout="wide",
+    initial_sidebar_state="auto",
+    menu_items={
+        'About': "MySS - 2023 - UNLaR"
+    }
+)
+
 # Barra lateral
 with st.sidebar:
     st.header("Descripción")
