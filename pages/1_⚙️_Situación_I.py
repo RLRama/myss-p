@@ -26,12 +26,16 @@ with st.sidebar:
         "Intervalo de tiempo de servicio `(min)`",
         value=[1,60]
     )
+    n = st.number_input(
+        "Clientes generados",
+        min_value=1
+    )
     t = st.number_input(
         "Duración de la simulación `(min)`",
         min_value=1
     )
     seed = st.number_input(
-        "Duración de la simulación `(min)`",
+        "Semilla para generar números aleatorios",
         value=9999, min_value=1
     )
 
