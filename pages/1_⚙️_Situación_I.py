@@ -14,3 +14,19 @@ st.set_page_config(
         'About': "MySS - 2023 - UNLaR"
     }
 )
+
+with st.sidebar:
+    st.header("⌨️")
+    st.subheader("Configurar parámetros")
+
+st.markdown(
+    """
+    # Situación I
+    ## Descripción
+    - Obedece al problema n° 1
+    - Clientes que llegan individualmente en intervalos aleatorios
+    - Cola FIFO
+    - Tiempos de prestación de servicios aleatorios
+    - El servidor no abandona el puesto de servicio
+    """
+)
