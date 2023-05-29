@@ -1,6 +1,6 @@
 import streamlit as st
-import datetime as dt
 import random as rnd
+from SimPy.Simulation import *
 
 # Barra lateral
 with st.sidebar:
