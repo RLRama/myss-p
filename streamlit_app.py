@@ -69,5 +69,9 @@ st.markdown(
 """
 )
 customers = st.number_input("Cantidad de clientes que llegan",min_value=1)
-customerMinArrTime = st.number_input("Mínimo")
-customerMaxArrTime = st.number_input("Máximo")
+customersMinArrTime = st.number_input("Mínimo")
+customersMaxArrTime = st.number_input("Máximo")
+customersArrTimeDistr = st.radio(
+    "Distribución de probabilidad",
+    ('Gaussiana', 'Uniforme')
+    )
