@@ -69,8 +69,8 @@ st.markdown(
     Intervalo de tiempo de llegada
 """
 )
-customersMinArrTime = st.number_input("Mínimo")
-customersMaxArrTime = st.number_input("Máximo")
+customersMinArrTime = st.number_input("Tiempo mínimo de llegada")
+customersMaxArrTime = st.number_input("Tiempo máximo de llegada")
 customersArrTimeDistr = st.radio(
     "Distribución de probabilidad de tiempo de llegada",
     ('Normal', 'Uniforme')
@@ -82,8 +82,8 @@ st.markdown(
     Intervalos de tiempo de servicio
 """
 )
-serviceMinTime = st.number_input("Mínimo")
-serviceMaxTime = st.number_input("Máximo")
+customersMinArrTime = st.number_input("Tiempo mínimo de servicio")
+customersMaxArrTime = st.number_input("Tiempo máximo de servicio")
 serviceTimeDistr = st.radio(
     "Distribución de probabilidad de tiempo de servicio",
     ('Normal', 'Uniforme')
