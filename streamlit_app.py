@@ -1,8 +1,6 @@
 import streamlit as st
 import datetime as dt
-
-
-st.image("https://em-content.zobj.net/thumbs/120/apple/354/level-slider_1f39a-fe0f.png")
+import random as rnd
 
 # Barra lateral
 with st.sidebar:
@@ -43,3 +41,4 @@ with st.sidebar:
     )
 
 # Parámetros
+st.image("https://em-content.zobj.net/thumbs/120/apple/354/level-slider_1f39a-fe0f.png")

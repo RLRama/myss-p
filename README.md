@@ -1,5 +1,4 @@
 # Práctica - Modelos y Simulación de Sistemas
-
 Solución universal para problemas de la parte práctica de Modelos y Simulación de Sistemas
 
 ## Académico
