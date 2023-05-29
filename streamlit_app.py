@@ -36,7 +36,8 @@ with st.sidebar:
     st.markdown(
         """
     - Python
-    - Streamlit 
+    - Streamlit
+    - SimPy
     """
     )
 

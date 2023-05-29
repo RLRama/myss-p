@@ -3,6 +3,7 @@ Solución universal para problemas de la parte práctica de Modelos y Simulació
 
 ## Académico
 - Universidad Nacional de La Rioja
+- Departamento Académico de Ciencias Exactas, Físicas y Naturales
 - Ingeniería en Sistemas de Información
 - 45: Modelos y Simulación de Sistemas
 
