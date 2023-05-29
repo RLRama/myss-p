@@ -3,3 +3,39 @@ import streamlit as st
 
 
 st.image("https://em-content.zobj.net/thumbs/120/apple/354/test-tube_1f9ea.png")
+
+with st.sidebar:
+    st.header("Descripción")
+    st.markdown(
+        """
+    - Cumplimenta con las distintas consignas y requisitos impuestos por las guías prácticas de 
+    - Año 2023
+    """
+    )
+    
+    st.header("Académico")
+    st.markdown(
+        """
+    - Universidad Nacional de La Rioja
+    - Departamento Académico de Ciencias Exactas, Físicas y Naturales
+    - Ingeniería en Sistemas de Información
+    - 45: Modelos y Simulación de Sistemas
+    """
+    )
+    
+    st.header("Nosotros")
+    st.markdown(
+        """
+    - Cano Angel Rodrigo | EISI-821
+    - Dominguez Sotomayor Santiago Ismael | EISI-782
+    - Rios Lopez Ramiro Ignacio | EISI-801    
+    """
+    )
+
+    st.header("Herramientas utilizadas")
+    st.markdown(
+        """
+    - Python
+    - Streamlit 
+    """
+    )
