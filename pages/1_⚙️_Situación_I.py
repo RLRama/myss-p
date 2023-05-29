@@ -18,9 +18,17 @@ st.set_page_config(
 with st.sidebar:
     st.header("⌨️")
     st.subheader("Configurar parámetros")
-    arrTimes = st.slider(
+    t_arr = st.slider(
         "Intervalo de llegada de clientes (min)",
-        value=[1.0,60.0]
+        value=[1,60]
+    )
+    t_serv = st.slider(
+        "Intervalo de tiempo de servicio (min)",
+        value=[1,60]
+    )
+    t = st.number_input(
+        "Duración de la simulación",
+        min_value=1
     )
 
 st.markdown(
