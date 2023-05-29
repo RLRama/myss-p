@@ -30,6 +30,10 @@ with st.sidebar:
         "Duración de la simulación `(min)`",
         min_value=1
     )
+    seed = st.number_input(
+        "Duración de la simulación `(min)`",
+        value=9999, min_value=1
+    )
 
 st.markdown(
     """
