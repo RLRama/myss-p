@@ -10,9 +10,9 @@ Solución universal para problemas de la parte práctica de Modelos y Simulació
 
 ## Integrantes: 
 
-- Cano Angel Rodrigo
-- Dominguez Sotomayor Santiago Ismael
-- Rios Lopez Ramiro Ignacio
+- Cano Angel Rodrigo | EISI-821
+- Dominguez Sotomayor Santiago Ismael | EISI-782
+- Rios Lopez Ramiro Ignacio | EISI-801  
 
 ## Herramientas y lenguajes
 
