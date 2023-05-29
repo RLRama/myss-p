@@ -66,12 +66,25 @@ st.subheader("Cliente")
 customers = st.number_input("Cantidad de clientes que llegan",min_value=1)
 st.markdown(
     """
-    Intervalos de llegada
+    Intervalo de tiempo de llegada
 """
 )
 customersMinArrTime = st.number_input("Mínimo")
 customersMaxArrTime = st.number_input("Máximo")
 customersArrTimeDistr = st.radio(
+    "Distribución de probabilidad",
+    ('Normal', 'Uniforme')
+    )
+
+st.subheader("Servidor")
+st.markdown(
+    """
+    Intervalos de tiempo de servicio
+"""
+)
+serviceMinTime = st.number_input("Mínimo")
+serviceMaxTime = st.number_input("Máximo")
+serviceTimeDistr = st.radio(
     "Distribución de probabilidad",
     ('Normal', 'Uniforme')
     )
