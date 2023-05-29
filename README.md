@@ -18,10 +18,3 @@ Solución universal para problemas de la parte práctica de Modelos y Simulació
 
 - Python
 - Streamlit
-
-## Problemas y soluciones
-### Problema I
-- Intervalo de llegada de cliente aleatorio (ingresables)
-- Intervalo de tiempo de servicio aleatorio (ingresables)
-- El servidor no abandona el puesto de servicio
-- Los clientes hacen cola de tiempo indefinido

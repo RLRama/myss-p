@@ -1,9 +1,10 @@
 import streamlit as st
+import datetime as dt
 
 
+st.image("https://em-content.zobj.net/thumbs/120/apple/354/level-slider_1f39a-fe0f.png")
 
-st.image("https://em-content.zobj.net/thumbs/120/apple/354/test-tube_1f9ea.png")
-
+# Barra lateral
 with st.sidebar:
     st.header("Descripción")
     st.markdown(
@@ -40,3 +41,5 @@ with st.sidebar:
     - Streamlit 
     """
     )
+
+# Parámetros
