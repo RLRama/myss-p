@@ -54,3 +54,14 @@ with st.sidebar:
 
 # Parámetros
 st.image("https://em-content.zobj.net/thumbs/120/apple/354/level-slider_1f39a-fe0f.png")
+st.header("Parámetros de simulación")
+st.markdown(
+    """
+- Definición de variables para el tratamiento de la simulación propuesta
+"""
+)
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.subheader("Cliente")
+    n = st.number_input(label='Número de clientes',min_value=1)
+    randArrTime = st.checkbox('Tiempo de llegada aleatorio de clientes')
