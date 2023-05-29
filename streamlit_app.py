@@ -76,6 +76,7 @@ customersArrTimeDistr = st.radio(
     ('Normal', 'Uniforme')
     )
 
+st.divider()
 st.subheader("Servidor")
 st.markdown(
     """
