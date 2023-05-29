@@ -59,23 +59,16 @@ st.image("https://em-content.zobj.net/thumbs/120/apple/354/level-slider_1f39a-fe
 st.header("Parámetros de simulación")
 st.markdown(
     """
-- Definición de variables para el tratamiento de la simulación propuesta
+Definición de variables para el tratamiento de la simulación propuesta
 """
 )
-col1, col2, col3 = st.columns(3)
-with col1:
-    st.subheader("Cliente")
-    customerN = st.number_input(label='Número de clientes',min_value=1)
-    randArrTime = st.checkbox('Tiempo de llegada aleatorio de clientes')
-    arrTime = st.number_input(label="Tiempo entre llegadas",min_value=1.00)
-    arrTimeDistr = st.radio(
-        "Distribución",
-        ('Normal', 'Uniforme')
-    )
-    arrTimeSpread = st.number_input(label="Dispersión",min_value=1.00)
-    if randArrTime:
-        arr
-
-    st.subheader("Simulación")
-    maxTime = st.number_input(label="Tiempo máximo",min_value=1)
-
+st.subheader("Cliente")
+st.markdown(
+    """
+    Intervalos de llegada
+"""
+)
+customerMinArrTime = st.number_input("Mínimo")
+customerMaxArrTime = st.number_input("Máximo")
+if customerMaxArrTime < customerMinArrTime:
+    customerMaxArrTime, customerMinArrTime = customerMinArrTime, customerMaxArrTime
