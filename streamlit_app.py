@@ -75,6 +75,9 @@ customersArrTimeDistr = st.radio(
     "Distribución de probabilidad de tiempo de llegada",
     ('Normal', 'Uniforme')
     )
+clientLeaves = st.checkbox('¿El cliente abandona la cola?')
+clienteLeaveTime = st.number_input("Límite de tiempo de abandono")
+st.caption("Ignorar si el cliente no abandona la cola")
 
 st.divider()
 st.subheader("Servidor")
@@ -89,11 +92,11 @@ serverWorkTimeDistr = st.radio(
     "Distribución de probabilidad de tiempo de servicio",
     ('Normal', 'Uniforme')
     )
-serverLeaves = st.checkbox('¿El servidor abandona la cola?')
-st.caption("Ignorar si el servidor no abandona la cola")
+serverLeaves = st.checkbox('¿El servidor abandona el puesto de servicio?')
 serverMinLeaveTime = st.number_input("Límite inferior de tiempo de abandono")
 serverMaxLeaveTime = st.number_input("Límite superior de tiempo de abandono")
 serverLeaveTimeDistr = st.radio(
     "Distribución de probabilidad de tiempo de abandono",
     ('Normal', 'Uniforme')
     )
+st.caption("Ignorar si el servidor no abandona el puesto de servicio")
