@@ -60,6 +60,6 @@ st.markdown(
     """
     Aplicación web para `Modelos y Simulación de Sistemas`
     ---
-    ** 👈 Seleccione una página de la barra lateral** para ver el funcionamiento
+    **👈 Seleccione una página de la barra lateral** para ver el funcionamiento
 """
 )
