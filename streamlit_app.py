@@ -82,9 +82,9 @@ st.markdown(
     Intervalos de tiempo de servicio
 """
 )
-serviceMinTime = st.number_input("Mínimo")
-serviceMaxTime = st.number_input("Máximo")
+serviceMinTime = st.number_input("Mínimo1")
+serviceMaxTime = st.number_input("Máximo1")
 serviceTimeDistr = st.radio(
-    "Distribución de probabilidad",
+    "Distribución de probabilidadx",
     ('Normal', 'Uniforme')
     )
