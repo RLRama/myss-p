@@ -1,6 +1,8 @@
 import streamlit as st
 import random as rnd
 import simpy as sp
+import numpy as np
+import pandas as pd
 
 # Configurar página
 st.set_page_config(
@@ -65,3 +67,8 @@ with col1:
     st.subheader("Cliente")
     n = st.number_input(label='Número de clientes',min_value=1)
     randArrTime = st.checkbox('Tiempo de llegada aleatorio de clientes')
+
+    
+    st.subheader("Simulación")
+    maxTime = st.number_input(label="Tiempo máximo",min_value=1)
+
