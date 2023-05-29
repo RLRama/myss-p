@@ -68,7 +68,6 @@ st.markdown(
     Intervalos de llegada
 """
 )
+customers = st.number_input("Cantidad de clientes que llegan",min_value=1)
 customerMinArrTime = st.number_input("Mínimo")
 customerMaxArrTime = st.number_input("Máximo")
-if customerMaxArrTime < customerMinArrTime:
-    customerMaxArrTime, customerMinArrTime = customerMinArrTime, customerMaxArrTime
