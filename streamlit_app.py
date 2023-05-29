@@ -63,15 +63,15 @@ Definición de variables para el tratamiento de la simulación propuesta
 """
 )
 st.subheader("Cliente")
+customers = st.number_input("Cantidad de clientes que llegan",min_value=1)
 st.markdown(
     """
     Intervalos de llegada
 """
 )
-customers = st.number_input("Cantidad de clientes que llegan",min_value=1)
 customersMinArrTime = st.number_input("Mínimo")
 customersMaxArrTime = st.number_input("Máximo")
 customersArrTimeDistr = st.radio(
     "Distribución de probabilidad",
-    ('Gaussiana', 'Uniforme')
+    ('Normal', 'Uniforme')
     )
