@@ -14,3 +14,4 @@ Solución universal para problemas de la parte práctica de Modelos y Simulació
 ## Herramientas y lenguajes
 - Python
 - Streamlit
+- SimPy
