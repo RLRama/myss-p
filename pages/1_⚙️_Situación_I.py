@@ -28,5 +28,9 @@ st.markdown(
     - Cola FIFO
     - Tiempos de prestación de servicios aleatorios
     - El servidor no abandona el puesto de servicio
+
+    ## Uso
+    - Configure parámetros usando la **barra lateral** para dar valores
+    - Presione el botón **'Simular'** para mostrar la tabla de simulación generada
     """
 )
