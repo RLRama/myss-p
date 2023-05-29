@@ -15,9 +15,6 @@ st.set_page_config(
     }
 )
 
-# Barra lateral
-with st.sidebar:
-
 st.image("https://em-content.zobj.net/thumbs/120/apple/354/level-slider_1f39a-fe0f.png")
 st.header("¡Hola! 👋")
 st.markdown(
