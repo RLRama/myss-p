@@ -8,7 +8,8 @@ with st.sidebar:
     st.header("Descripción")
     st.markdown(
         """
-    - Cumplimenta con las distintas consignas y requisitos impuestos por las guías prácticas de 
+    - Cumplimenta con las distintas consignas y requisitos impuestos por las guías prácticas de '45: Modelos y Simulación de Sistemas'
+    - Permite la operación paramétrica de una simulación de sistema de colas
     - Año 2023
     """
     )
