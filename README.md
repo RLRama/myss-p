@@ -16,3 +16,5 @@ Solución universal para problemas de la parte práctica de Modelos y Simulació
 - Python
 - Streamlit
 - SimPy
+- NumPy
+- Pandas

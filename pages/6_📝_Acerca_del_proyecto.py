@@ -47,5 +47,6 @@ st.markdown(
     - Streamlit
     - SimPy
     - Pandas
+    - NumPy
     """
     )

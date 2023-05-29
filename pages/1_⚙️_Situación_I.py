@@ -18,13 +18,13 @@ st.set_page_config(
 with st.sidebar:
     st.header("⌨️")
     st.subheader("Configurar parámetros")
-    t_arr = st.slider(
-        "Intervalo de llegada de clientes `(min)`",
-        value=[1,60]
+    t_arr = st.number_input(
+        "Tiempo promedio entre llegadas de clientes `(min)`",
+        min_value=1.00
     )
-    t_serv = st.slider(
-        "Intervalo de tiempo de servicio `(min)`",
-        value=[1,60]
+    t_serv = st.number_input(
+        "Tiempo promedio de servicio `(min)`",
+        min_value=1.00
     )
     n = st.number_input(
         "Clientes generados",
@@ -32,7 +32,7 @@ with st.sidebar:
     )
     t = st.number_input(
         "Duración de la simulación `(min)`",
-        min_value=1
+        min_value=1.00
     )
     seed = st.number_input(
         "Semilla para generar números aleatorios",
