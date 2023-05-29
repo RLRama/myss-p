@@ -20,7 +20,7 @@ with st.sidebar:
     st.subheader("Configurar parámetros")
     arrTimes = st.slider(
         "Intervalo de llegada de clientes (min)",
-        value=[1,60]
+        value=[1.0,60.0]
     )
 
 st.markdown(
