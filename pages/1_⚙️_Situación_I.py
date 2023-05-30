@@ -69,7 +69,7 @@ def source(env, number, interval, counter):
 def customer(env, name, counter, time_in_bank):
     """Customer arrives, is served and leaves."""
     arrive = env.now
-    st.text('%7.4f %s: Here I am' % (arrive, name))
+    st.text('| %04.2f | %s | Evento de llegada |' % (arrive, name))
 
     with counter.request() as req:
         patience = random.uniform(MIN_PATIENCE, MAX_PATIENCE)
@@ -80,25 +80,23 @@ def customer(env, name, counter, time_in_bank):
 
         if req in results:
             # We got to the counter
-            st.text('%7.4f %s: Waited %6.3f' % (env.now, name, wait))
+            st.text('| %04.2f | %s | Esperó %04.2f min |' % (env.now, name, wait))
 
             tib = random.expovariate(1.0 / time_in_bank)
             yield env.timeout(tib)
-            st.text('%7.4f %s: Finished' % (env.now, name))
+            st.text('| %04.2f | %s | Fin de servicio |' % (env.now, name))
 
         else:
             # We reneged
             st.text('%7.4f %s: RENEGED after %6.3f' % (env.now, name, wait))
 
-
 # Setup and start the simulation
 random.seed(RANDOM_SEED)
 env = simpy.Environment()
 
-
-
 if st.button('Simular'):
     # Start processes and run
+    st.text('| Tiempo | N° de cliente | Detalle de evento |')
     counter = simpy.Resource(env, capacity=1)
     env.process(source(env, NEW_CUSTOMERS, INTERVAL_CUSTOMERS, counter))
     env.run()
