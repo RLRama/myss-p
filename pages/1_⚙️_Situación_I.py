@@ -80,15 +80,15 @@ def customer(env, name, counter, time_in_bank):
 
         if req in results:
             # We got to the counter
-            st.write('%7.4f %s: Waited %6.3f' % (env.now, name, wait))
+            st.text('%7.4f %s: Waited %6.3f' % (env.now, name, wait))
 
             tib = random.expovariate(1.0 / time_in_bank)
             yield env.timeout(tib)
-            st.write('%7.4f %s: Finished' % (env.now, name))
+            st.text('%7.4f %s: Finished' % (env.now, name))
 
         else:
             # We reneged
-            st.write('%7.4f %s: RENEGED after %6.3f' % (env.now, name, wait))
+            st.text('%7.4f %s: RENEGED after %6.3f' % (env.now, name, wait))
 
 
 # Setup and start the simulation
@@ -103,4 +103,4 @@ if st.button('Simular'):
     env.process(source(env, NEW_CUSTOMERS, INTERVAL_CUSTOMERS, counter))
     env.run()
 else:
-    st.write('')
+    st.text('')
