@@ -57,6 +57,10 @@ st.markdown(
     - Presione el botón **'Simular'** para mostrar la tabla de simulación generada
     """
 )
+
+random.seed(RANDOM_SEED)
+env = simpy.Environment()
+
 if st.button('Simular'):
     st.write('')
     st.write(env.process(source(env, NEW_CUSTOMERS, INTERVAL_CUSTOMERS, counter)))
@@ -97,8 +101,6 @@ def customer(env, name, counter, time_in_bank):
             st.write('%7.4f %s: RENEGED after %6.3f' % (env.now, name, wait))
 
 # Setup and start the simulation
-random.seed(RANDOM_SEED)
-env = simpy.Environment()
 
 # Start processes and run
 counter = simpy.Resource(env, capacity=1)
