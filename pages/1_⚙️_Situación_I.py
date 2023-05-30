@@ -69,7 +69,7 @@ def source(env, number, interval, counter):
 def customer(env, name, counter, time_in_bank):
     """Customer arrives, is served and leaves."""
     arrive = env.now
-    st.write('%7.4f %s: Here I am' % (arrive, name))
+    st.text('%7.4f %s: Here I am' % (arrive, name))
 
     with counter.request() as req:
         patience = random.uniform(MIN_PATIENCE, MAX_PATIENCE)
