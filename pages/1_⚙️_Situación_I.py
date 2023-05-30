@@ -39,6 +39,9 @@ with st.sidebar:
         value=9999, min_value=1
     )
 
+MIN_PATIENCE = 9999999999
+MAX_PATIENCE = 9999999999
+
 st.markdown(
     """
     # Situación I
