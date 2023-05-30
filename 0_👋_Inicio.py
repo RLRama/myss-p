@@ -19,7 +19,8 @@ st.image("https://em-content.zobj.net/thumbs/120/apple/354/level-slider_1f39a-fe
 st.header("¡Hola! 👋")
 st.markdown(
     """
-    Aplicación web para `Modelos y Simulación de Sistemas`
+    Aplicación web para `Modelos y Simulación de Sistemas` 
+    
     **👈 Seleccione una página de la barra lateral** para ver el funcionamiento
 """
 )

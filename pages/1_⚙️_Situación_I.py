@@ -55,3 +55,16 @@ st.markdown(
     """
 )
 
+class Source(Process):
+    def generate(self,number,meanTBA):
+        for i in range(number):
+            c = Customer(name="Cliente %04d"%(i,),sim=self.sim)
+            self.sim.activate(c,c.visit(b=self.sim.k))
+            t = expovariate(1.0/meanTBA)               
+            yield hold,self,t
+
+class Customer(Process):
+    def visit(self,b):
+        arrive=self.sim.now()
+
+class
