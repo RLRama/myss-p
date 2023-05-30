@@ -57,6 +57,12 @@ st.markdown(
     - Presione el botón **'Simular'** para mostrar la tabla de simulación generada
     """
 )
+if st.button('Simular'):
+    st.write('')
+    st.write(env.process(source(env, NEW_CUSTOMERS, INTERVAL_CUSTOMERS, counter)))
+    st.write(env.run())
+else:
+    st.write('')
 
 def source(env, number, interval, counter):
     """Source generates customers randomly"""
@@ -90,9 +96,7 @@ def customer(env, name, counter, time_in_bank):
             # We reneged
             st.write('%7.4f %s: RENEGED after %6.3f' % (env.now, name, wait))
 
-
 # Setup and start the simulation
-st.write('Encabezado supuesto')
 random.seed(RANDOM_SEED)
 env = simpy.Environment()
 
@@ -100,9 +104,3 @@ env = simpy.Environment()
 counter = simpy.Resource(env, capacity=1)
 env.process(source(env, NEW_CUSTOMERS, INTERVAL_CUSTOMERS, counter))
 env.run()
-
-if st.button('Simular'):
-    st.write(env.process(source(env, NEW_CUSTOMERS, INTERVAL_CUSTOMERS, counter)))
-    st.write(env.run())
-else:
-    st.write('')
