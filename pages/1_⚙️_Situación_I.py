@@ -18,7 +18,7 @@ st.set_page_config(
 with st.sidebar:
     st.header("⌨️")
     st.subheader("Configurar parámetros")
-    t_arr = st.number_input(
+    INTERVAL_CUSTOMERS = st.number_input(
         "Tiempo promedio entre llegadas de clientes `(min)`",
         min_value=1.00
     )
@@ -26,7 +26,7 @@ with st.sidebar:
         "Tiempo promedio de servicio `(min)`",
         min_value=1.00
     )
-    n = st.number_input(
+    NEW_CUSTOMERS = st.number_input(
         "Clientes generados",
         min_value=1
     )
@@ -34,7 +34,7 @@ with st.sidebar:
         "Duración de la simulación `(min)`",
         min_value=1.00
     )
-    seed = st.number_input(
+    RANDOM_SEED = st.number_input(
         "Semilla para generar números aleatorios",
         value=9999, min_value=1
     )
@@ -55,16 +55,51 @@ st.markdown(
     """
 )
 
-class Source(Process):
-    def generate(self,number,meanTBA):
-        for i in range(number):
-            c = Customer(name="Cliente %04d"%(i,),sim=self.sim)
-            self.sim.activate(c,c.visit(b=self.sim.k))
-            t = expovariate(1.0/meanTBA)               
-            yield hold,self,t
+def source(env, number, interval, counter):
+    """Source generates customers randomly"""
+    for i in range(number):
+        c = customer(env, 'Customer%02d' % i, counter, time_in_bank=12.0)
+        env.process(c)
+        t = random.expovariate(1.0 / interval)
+        yield env.timeout(t)
 
-class Customer(Process):
-    def visit(self,b):
-        arrive=self.sim.now()
+def customer(env, name, counter, time_in_bank):
+    """Customer arrives, is served and leaves."""
+    arrive = env.now
+    print('%7.4f %s: Here I am' % (arrive, name))
 
-class
+    with counter.request() as req:
+        patience = random.uniform(MIN_PATIENCE, MAX_PATIENCE)
+        # Wait for the counter or abort at the end of our tether
+        results = yield req | env.timeout(patience)
+
+        wait = env.now - arrive
+
+        if req in results:
+            # We got to the counter
+            print('%7.4f %s: Waited %6.3f' % (env.now, name, wait))
+
+            tib = random.expovariate(1.0 / time_in_bank)
+            yield env.timeout(tib)
+            print('%7.4f %s: Finished' % (env.now, name))
+
+        else:
+            # We reneged
+            print('%7.4f %s: RENEGED after %6.3f' % (env.now, name, wait))
+
+
+# Setup and start the simulation
+print('Encabezado supuesto')
+random.seed(RANDOM_SEED)
+env = simpy.Environment()
+
+# Start processes and run
+counter = simpy.Resource(env, capacity=1)
+env.process(source(env, NEW_CUSTOMERS, INTERVAL_CUSTOMERS, counter))
+env.run()
+
+if st.button('Simular'):
+    st.write(env.process(source(env, NEW_CUSTOMERS, INTERVAL_CUSTOMERS, counter)))
+    st.write(env.run())
+else:
+    st.write('')
