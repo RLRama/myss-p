@@ -1,5 +1,5 @@
 import streamlit as st
-import random as rnd
+import random
 import simpy as sp
 import numpy as np
 import pandas as pd
