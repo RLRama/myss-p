@@ -61,7 +61,7 @@ st.markdown(
 def source(env, number, interval, counter):
     """Source generates customers randomly"""
     for i in range(number):
-        c = customer(env, 'Customer%02d' % i, counter, time_in_bank=12.0)
+        c = customer(env, 'Cliente %04d' % i, counter, time_in_bank=12.0)
         env.process(c)
         t = random.expovariate(1.0 / interval)
         yield env.timeout(t)
