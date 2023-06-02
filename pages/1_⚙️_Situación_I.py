@@ -108,11 +108,13 @@ def mm1_queue_simulation(arrival_rate, service_rate, simulation_time):
         if queue_size > 0:
             next_departure_time = clock + generate_random_numbers(service_rate, distribution)
 
+        formatted_clock = format_float_as_time(clock)
+
         data.append({
             "Evento": "Llegada" if current_event.arrival else "Fin de servicio",
-            "Hora": format_float_as_time(clock),
-            "Siguiente llegada": format_float_as_time(next_arrival_time),
-            "Siguiente fin de servicio": format_float_as_time(next_departure_time),
+            "Hora": clock,
+            "Siguiente llegada": next_arrival_time,
+            "Siguiente fin de servicio": next_departure_time,
             "Clientes en cola": queue_size,
             "Servidor": "Ocupado" if queue_size > 0 else "Libre"
         })
@@ -143,7 +145,7 @@ def mm1_queue_simulation(arrival_rate, service_rate, simulation_time):
     st.write("### Resultados de la simulación:")
     st.write("- Tiempo de simulación:", simulation_time)
     st.write("- Servicios completados:", num_completed_jobs)
-    st.write("- Tiempo de respuesta promedio (tiempo total de respuesta / trabajos completados):", average_response_time)
+    st.write("- Tiempo de respuesta promedio (tiempo total de respuesta / trabajos completados):", (average_response_time))
     st.write("- Utilización (trabajos completados / reloj):", utilization)
 
     return df
