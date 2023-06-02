@@ -55,6 +55,8 @@ with st.sidebar:
     "Distribución a usar para generar los números aleatorios",
     ('uniform', 'gaussian'))
 
+    return_rate = 
+
 def generate_random_numbers(interval, distribution):
     lower_bound = interval[0]
     upper_bound = interval[1]
@@ -180,5 +182,5 @@ def mm1_queue_simulation(arrival_rate, service_rate, break_rate, return_rate, si
 st.checkbox("Usar ancho total de la página", value=False, key="use_container_width")
 
 if st.button ('Simular'):
-    df = mm1_queue_simulation(arrival_rate, service_rate, simulation_time)
+    df = mm1_queue_simulation(arrival_rate, service_rate, break_rate, return_rate, simulation_time)
     st.dataframe(df, use_container_width=st.session_state.use_container_width)
