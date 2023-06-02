@@ -27,6 +27,7 @@ def finservicio(ps, q, horaActual, deltaFS):
         horaProximoFinServicio = horaActual + dt.timedelta(seconds=t_s)
     else:
         ps = 0
+        t_s = 0
         horaProximoFinServicio = None
 
     return horaProximoFinServicio, t_s
@@ -43,8 +44,6 @@ horaActual = dt.datetime.strptime(inicio_simulacion, '%H:%M:%S')
 ps_estado = st.radio('¿El puesto de servicio está ocupado al inicio de la simulación?', ('Sí', 'No'))
 ps = 1 if ps_estado == 'Sí' else 0
 
-q = 0  # Inicializar la variable q
-
 deltaLLegadas = st.slider('Intervalo de llegada de clientes (segundos)', min_value=1, max_value=60, value=45)
 deltaFS = st.slider('Duración del servicio (segundos)', min_value=1, max_value=60, value=40)
 
@@ -54,8 +53,8 @@ for _ in range(10):  # Realizar 10 iteraciones de simulación
     horaProximaLlegada, horaProximoFinServicio, t_llegada, t_s = llegadas(ps, q, horaActual, deltaLLegadas)
 
     # Guardar los resultados de cada iteración en una lista
-    results.append((horaActual.strftime('%H:%M:%S'), horaProximaLlegada.strftime('%H:%M:%S'), 
-                    horaProximoFinServicio.strftime('%H:%M:%S') if horaProximoFinServicio else None, 
+    results.append((horaActual.strftime('%H:%M:%S'), horaProximaLlegada.strftime('%H:%M:%S'),
+                    horaProximoFinServicio.strftime('%H:%M:%S') if horaProximoFinServicio else None,
                     q, 'Ocupado' if ps == 1 else 'Desocupado'))
 
     # Actualizar las variables para la siguiente iteración
