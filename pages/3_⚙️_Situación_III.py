@@ -43,6 +43,8 @@ horaActual = dt.datetime.strptime(inicio_simulacion, '%H:%M')
 ps_estado = st.radio('¿El puesto de servicio está ocupado al inicio de la simulación?', ('Sí', 'No'))
 ps = 1 if ps_estado == 'Sí' else 0
 
+q = 0  # Inicializar la variable q
+
 deltaLLegadas = st.slider('Intervalo de llegada de clientes (segundos)', min_value=1, max_value=60, value=45)
 deltaFS = st.slider('Duración del servicio (segundos)', min_value=1, max_value=60, value=40)
 
