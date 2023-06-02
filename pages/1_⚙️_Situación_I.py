@@ -47,7 +47,7 @@ st.markdown(
     - Obedece al problema n° 1
     - Clientes que llegan individualmente en intervalos aleatorios
     - Cola FIFO (los clientes son atendidos en el orden que llegan)
-    - Tiempos de prestación de servicios aleatorios
+    - Tiempos de prestación de servicios de intervalo aleatorios
     - El servidor no abandona el puesto de servicio
 
     ## Uso
@@ -67,7 +67,15 @@ def generate_random_numbers(interval, distribution):
         sigma = (upper_bound - lower_bound) / 6
         return np.random.normal(mu, sigma)
     else:
-        raise ValueError("Invalid distribution. Please choose 'uniform' or 'gaussian'.")
+        raise ValueError("Distribución inválida")
+    
+def format_float_as_time(float_minutes):
+    hours = int(float_minutes // 60)
+    minutes = int(float_minutes % 60)
+    seconds = int((float_minutes * 60) % 60)
+
+    formatted_time = "{:02d}:{:02d}:{:02d}".format(hours, minutes, seconds)
+    return formatted_time
 
 class Event:
     def __init__(self, time, arrival):
@@ -100,9 +108,11 @@ def mm1_queue_simulation(arrival_rate, service_rate, simulation_time):
         if queue_size > 0:
             next_departure_time = clock + generate_random_numbers(service_rate, distribution)
 
+        formatted_clock = format_float_as_time(clock)
+
         data.append({
             "Evento": "Llegada" if current_event.arrival else "Fin de servicio",
-            "Hora": clock,
+            "Hora": formatted_clock,
             "Siguiente llegada": next_arrival_time,
             "Siguiente fin de servicio": next_departure_time,
             "Clientes en cola": queue_size,
