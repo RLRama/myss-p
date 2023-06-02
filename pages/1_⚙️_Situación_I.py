@@ -56,8 +56,8 @@ st.markdown(
     """
 )
 
-def format_float_as_time(float_minutes):
-    total_seconds = int(float_minutes * 60)
+def format_float_as_time(clock):
+    total_seconds = int(clock * 60)
     time = datetime.time(0, 0, total_seconds)
     formatted_time = time.strftime("%H:%M:%S")
 
