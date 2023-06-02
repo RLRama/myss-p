@@ -78,6 +78,7 @@ class Event:
 
 def mm1_queue_simulation(arrival_rate, service_rate, simulation_time):
     event_queue = []
+    data = []
     clock = 0
     num_jobs = 0
     num_completed_jobs = 0
@@ -98,13 +99,14 @@ def mm1_queue_simulation(arrival_rate, service_rate, simulation_time):
         if queue_size > 0:
             next_departure_time = clock + generate_random_numbers(service_rate, distribution)
 
-        st.write("Event Type:", "Arrival" if current_event.arrival else "Departure")
-        st.write("Current Time:", clock)
-        st.write("Next Arrival Time:", next_arrival_time)
-        st.write("Next Departure Time:", next_departure_time)
-        st.write("Queue Size:", queue_size)
-        st.write("Server State:", "Busy" if queue_size > 0 else "Idle")
-        st.write("------------------------------------")
+        data.append({
+            "Evento": "Llegada" if current_event.arrival else "Fin de servicio",
+            "Hora": clock,
+            "Siguiente llegada": next_arrival_time,
+            "Siguiente fin de servicio": next_departure_time,
+            "Clientes en cola": queue_size,
+            "Servidor": "Ocupado" if queue_size > 0 else "Libre"
+        })
 
         if current_event.arrival:
             num_jobs += 1
@@ -130,7 +132,12 @@ def mm1_queue_simulation(arrival_rate, service_rate, simulation_time):
     st.write("Resultados de la simulación:")
     st.write("Tiempo de simulación:", simulation_time)
     st.write("Servicios completados:", num_completed_jobs)
-    st.write("Tiempo de respuesta promedio:", average_response_time)
+    st.write("Tiempo de respuesta promedio (tiempo total de respuesta / trabajos completados):", average_response_time)
     st.write("Utilización (trabajos completados / reloj):", utilization)
 
-mm1_queue_simulation(arrival_rate, service_rate, simulation_time)
+    df = pd.DataFrame(data)
+    return df
+
+if st.button ('Simular'):
+    df = mm1_queue_simulation(arrival_rate, service_rate, simulation_time)
+    st.dataframe(df)
