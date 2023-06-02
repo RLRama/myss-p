@@ -3,6 +3,7 @@ import random
 import numpy as np
 import pandas as pd
 import math
+import datetime
 
 # Configurar página de Streamlit
 st.set_page_config(
@@ -55,6 +56,13 @@ st.markdown(
     """
 )
 
+def format_float_as_time(float_minutes):
+    total_seconds = int(float_minutes * 60)
+    time = datetime.time(0, 0, total_seconds)
+    formatted_time = time.strftime("%H:%M:%S")
+
+    return formatted_time
+
 def generate_random_numbers(interval, distribution):
     lower_bound = interval[0]
     upper_bound = interval[1]
@@ -101,9 +109,9 @@ def mm1_queue_simulation(arrival_rate, service_rate, simulation_time):
 
         data.append({
             "Evento": "Llegada" if current_event.arrival else "Fin de servicio",
-            "Hora": clock,
-            "Siguiente llegada": next_arrival_time,
-            "Siguiente fin de servicio": next_departure_time,
+            "Hora": format_float_as_time(clock),
+            "Siguiente llegada": format_float_as_time(next_arrival_time),
+            "Siguiente fin de servicio": format_float_as_time(next_departure_time),
             "Clientes en cola": queue_size,
             "Servidor": "Ocupado" if queue_size > 0 else "Libre"
         })
