@@ -1,10 +1,11 @@
 import streamlit as st
 import random
-import simpy
 import numpy as np
 import pandas as pd
+import math
+import datetime
 
-# Configurar página
+# Configurar página de Streamlit
 st.set_page_config(
     page_title="Simulación de colas",
     page_icon="🧪",
@@ -15,32 +16,29 @@ st.set_page_config(
     }
 )
 
+# Example usage
+arrival_rate = 0.2
+service_rate = 0.3
+simulation_time = 100
+
 with st.sidebar:
     st.header("⌨️")
     st.subheader("Configurar parámetros")
-    INTERVAL_CUSTOMERS = st.number_input(
-        "Tiempo promedio entre llegadas de clientes `(min)`",
-        min_value=1.00
+    arrival_rate = st.slider(
+        "Intervalo entre llegadas de clientes `(min)`",
+        0.0, 100.0, (25.0, 75.0)
     )
-    t_serv = st.number_input(
-        "Tiempo promedio de servicio `(min)`",
-        min_value=1.00
+    service_rate = st.slider(
+        "Intervalo de tiempo de servicio `(min)`",
+        0.0, 100.0, (25.0, 75.0)
     )
-    NEW_CUSTOMERS = st.number_input(
-        "Clientes generados",
-        min_value=1
-    )
-    t = st.number_input(
+    simulation_time = st.number_input(
         "Duración de la simulación `(min)`",
         min_value=1.00
     )
-    RANDOM_SEED = st.number_input(
-        "Semilla para generar números aleatorios",
-        value=9999, min_value=1
-    )
-
-MIN_PATIENCE = 9999999999
-MAX_PATIENCE = 9999999999
+    distribution = st.radio(
+    "Distribución a usar para generar los números aleatorios",
+    ('uniform', 'gaussian'))
 
 st.markdown(
     """
@@ -49,7 +47,7 @@ st.markdown(
     - Obedece al problema n° 1
     - Clientes que llegan individualmente en intervalos aleatorios
     - Cola FIFO (los clientes son atendidos en el orden que llegan)
-    - Tiempos de prestación de servicios aleatorios
+    - Tiempos de prestación de servicios de intervalo aleatorios
     - El servidor no abandona el puesto de servicio
 
     ## Uso
@@ -58,47 +56,101 @@ st.markdown(
     """
 )
 
-def source(env, number, interval, counter):
-    """Source generates customers randomly"""
-    for i in range(number):
-        c = customer(env, 'Cliente %04d' % i, counter, time_in_bank=12.0)
-        env.process(c)
-        t = random.expovariate(1.0 / interval)
-        yield env.timeout(t)
+def generate_random_numbers(interval, distribution):
+    lower_bound = interval[0]
+    upper_bound = interval[1]
 
-def customer(env, name, counter, time_in_bank):
-    """Customer arrives, is served and leaves."""
-    arrive = env.now
-    st.text('| %04.2f | %s | Evento de llegada |' % (arrive, name))
+    if distribution == 'uniform':
+        return random.uniform(lower_bound, upper_bound)
+    elif distribution == 'gaussian':
+        mu = (lower_bound + upper_bound) / 2
+        sigma = (upper_bound - lower_bound) / 6
+        return np.random.normal(mu, sigma)
+    else:
+        raise ValueError("Distribución inválida")
+    
+def format_float_as_time(float_minutes):
+    time = pd.to_timedelta(float_minutes, unit='m')
+    formatted_time = str(time)
 
-    with counter.request() as req:
-        patience = random.uniform(MIN_PATIENCE, MAX_PATIENCE)
-        # Esperar al contador o terminar el proceso
-        results = yield req | env.timeout(patience)
+    if '.' in formatted_time:
+        formatted_time = formatted_time[:-3]
 
-        wait = env.now - arrive
+    return formatted_time
 
-        if req in results:
-            # Contador
-            st.text('| %04.2f | %s | Esperó %04.2f min |' % (env.now, name, wait))
+class Event:
+    def __init__(self, time, arrival):
+        self.time = time
+        self.arrival = arrival
 
-            tib = random.expovariate(1.0 / time_in_bank)
-            yield env.timeout(tib)
-            st.text('| %04.2f | %s | Fin de servicio |' % (env.now, name))
+    def __lt__(self, other):
+        return self.time < other.time
 
+def mm1_queue_simulation(arrival_rate, service_rate, simulation_time):
+    event_queue = []
+    data = []
+    clock = 0
+    num_jobs = 0
+    num_completed_jobs = 0
+    total_response_time = 0
+    previous_event_time = 0
+    queue_size = 0
+
+    while clock < simulation_time:
+        event_queue.append(Event(clock + generate_random_numbers(arrival_rate, distribution), True))
+        event_queue.sort()
+        current_event = event_queue.pop(0)
+        clock = current_event.time
+
+        next_arrival_time = event_queue[0].time if event_queue else None
+
+        next_departure_time = None
+        if queue_size > 0:
+            next_departure_time = clock + generate_random_numbers(service_rate, distribution)
+
+
+        data.append({
+            "Evento": "Llegada" if current_event.arrival else "Fin de servicio",
+            "Hora": format_float_as_time(clock),
+            "Siguiente llegada": format_float_as_time(next_arrival_time),
+            "Siguiente fin de servicio": format_float_as_time(next_departure_time),
+            "Clientes en cola": queue_size,
+            "Servidor": "Ocupado" if queue_size > 0 else "Libre"
+        })
+
+        if current_event.arrival:
+            num_jobs += 1
+            service_time = generate_random_numbers(service_rate, distribution)
+            total_response_time += clock - previous_event_time
+            previous_event_time = clock
+
+            if queue_size == 0:
+                event_queue.append(Event(clock + service_time, False))
+            
+            queue_size += 1
         else:
-            # No se usa porque no hay abandono
-            st.text('%7.4f %s: RENEGED after %6.3f' % (env.now, name, wait))
+            num_completed_jobs += 1
+            queue_size -= 1
 
-# Configurar e iniciar simulación
-random.seed(RANDOM_SEED)
-env = simpy.Environment()
+            if queue_size > 0:
+                service_time = generate_random_numbers(service_rate, distribution)
+                event_queue.append(Event(clock + service_time, False))
 
-if st.button('Simular'):
-    # Iniciar procesos y ejecutar
-    st.text('| Tiempo | N° de cliente | Detalle de evento |')
-    counter = simpy.Resource(env, capacity=1)
-    env.process(source(env, NEW_CUSTOMERS, INTERVAL_CUSTOMERS, counter))
-    env.run()
-else:
-    st.text('')
+    average_response_time = total_response_time / num_completed_jobs
+    utilization = num_completed_jobs / clock
+
+    df = pd.DataFrame(data)
+
+    st.write("### Resultados de la simulación:")
+    st.write("- Tiempo de simulación:", format_float_as_time(simulation_time))
+    st.write("- Servicios completados:", num_completed_jobs)
+    st.write("- Tiempo de respuesta promedio (tiempo total de respuesta / trabajos completados):", format(average_response_time))
+    st.write("- Utilización (trabajos completados / reloj):", utilization)
+
+    return df
+
+st.checkbox("Usar ancho total de la página", value=False, key="use_container_width")
+
+if st.button ('Simular'):
+    df = mm1_queue_simulation(arrival_rate, service_rate, simulation_time)
+    st.dataframe(df, use_container_width=st.session_state.use_container_width)
