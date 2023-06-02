@@ -11,25 +11,25 @@ def llegadas(ps, q, horaActual, deltaLLegadas):
     if ps == 0:
         t_s = random.randint(1, 10)  # Generar tiempo de servicio aleatorio
         horaProximoFinServicio = horaActual + dt.timedelta(seconds=t_s)
+        ps = 1  # Ocupar el puesto de servicio
     else:
         t_s = 0
         horaProximoFinServicio = None
 
-    return horaProximaLlegada, horaProximoFinServicio, t_llegada, t_s
+    return horaProximaLlegada, horaProximoFinServicio, t_llegada, t_s, ps
 
 
 # Función para simular el fin de servicio
 def finservicio(ps, q, horaActual, deltaFS):
     if q > 0:
-        ps = 1
-        q -= 1
+        q -= 1  # Atender al próximo cliente en cola
         t_s = random.randint(1, 10)  # Generar tiempo de servicio aleatorio
         horaProximoFinServicio = horaActual + dt.timedelta(seconds=t_s)
     else:
-        ps = 0
+        ps = 0  # Liberar el puesto de servicio
         horaProximoFinServicio = None
 
-    return horaProximoFinServicio, t_s
+    return horaProximoFinServicio, t_s, ps
 
 
 # Configuración de la interfaz de Streamlit
@@ -53,7 +53,7 @@ num_iteraciones = st.number_input('Ingrese la cantidad de iteraciones de la simu
 # Simulación del sistema de colas
 results = []
 for _ in range(num_iteraciones):  # Realizar las iteraciones de simulación especificadas
-    horaProximaLlegada, horaProximoFinServicio, t_llegada, t_s = llegadas(ps, q, horaActual, deltaLLegadas)
+    horaProximaLlegada, horaProximoFinServicio, t_llegada, t_s, ps = llegadas(ps, q, horaActual, deltaLLegadas)
 
     # Guardar los resultados de cada iteración en una lista
     results.append((horaActual, horaProximaLlegada, horaProximoFinServicio, q, 'Ocupado' if ps == 1 else 'Desocupado'))
@@ -62,8 +62,9 @@ for _ in range(num_iteraciones):  # Realizar las iteraciones de simulación espe
     horaActual = horaProximaLlegada
 
     if horaProximoFinServicio and horaProximoFinServicio <= horaActual:
-        horaProximoFinServicio, t_s = finservicio(ps, q, horaActual, deltaFS)
+        horaProximoFinServicio, t_s, ps = finservicio(ps, q, horaActual, deltaFS)
         horaActual = horaProximoFinServicio
+        q += 1  # Añadir al cliente atendido a la cola
 
 # Muestra Resultados
 st.header('Resultados de la simulación')
