@@ -37,8 +37,8 @@ st.title('Simulación de Sistema de Colas')
 st.write('Ingrese las condiciones iniciales para iniciar la simulación')
 
 # Entrada manual de las condiciones iniciales
-inicio_simulacion = st.text_input('Ingrese la hora de inicio de la simulación (HH:MM)', value='08:00')
-horaActual = dt.datetime.strptime(inicio_simulacion, '%H:%M')
+inicio_simulacion = st.text_input('Ingrese la hora de inicio de la simulación (HH:MM:SS)', value='08:00:00')
+horaActual = dt.datetime.strptime(inicio_simulacion, '%H:%M:%S')
 
 ps_estado = st.radio('¿El puesto de servicio está ocupado al inicio de la simulación?', ('Sí', 'No'))
 ps = 1 if ps_estado == 'Sí' else 0
@@ -54,7 +54,9 @@ for _ in range(10):  # Realizar 10 iteraciones de simulación
     horaProximaLlegada, horaProximoFinServicio, t_llegada, t_s = llegadas(ps, q, horaActual, deltaLLegadas)
 
     # Guardar los resultados de cada iteración en una lista
-    results.append((horaActual, horaProximaLlegada, horaProximoFinServicio, q, 'Ocupado' if ps == 1 else 'Desocupado'))
+    results.append((horaActual.strftime('%H:%M:%S'), horaProximaLlegada.strftime('%H:%M:%S'), 
+                    horaProximoFinServicio.strftime('%H:%M:%S') if horaProximoFinServicio else None, 
+                    q, 'Ocupado' if ps == 1 else 'Desocupado'))
 
     # Actualizar las variables para la siguiente iteración
     horaActual = horaProximaLlegada
