@@ -57,8 +57,8 @@ st.markdown(
 )
 
 def format_float_as_time(float_value):
-    hours = int(float_value // 3600)
-    minutes = int((float_value % 3600) // 60)
+    hours = int(float_value / 3600)
+    minutes = int((float_value % 3600) / 60)
     seconds = int(float_value % 60)
 
     formatted_time = "{:02d}:{:02d}:{:02d}".format(hours, minutes, seconds)
@@ -139,9 +139,9 @@ def mm1_queue_simulation(arrival_rate, service_rate, simulation_time):
     utilization = num_completed_jobs / clock
 
     st.write("### Resultados de la simulación:")
-    st.write("- Tiempo de simulación:", simulation_time)
+    st.write("- Tiempo de simulación:", format_float_as_time(simulation_time))
     st.write("- Servicios completados:", num_completed_jobs)
-    st.write("- Tiempo de respuesta promedio (tiempo total de respuesta / trabajos completados):", average_response_time)
+    st.write("- Tiempo de respuesta promedio (tiempo total de respuesta / trabajos completados):", format_float_as_time(average_response_time))
     st.write("- Utilización (trabajos completados / reloj):", utilization)
 
     df = pd.DataFrame(data)
