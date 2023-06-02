@@ -57,12 +57,11 @@ st.markdown(
 )
 
 def format_float_as_time(float_value):
-    time = datetime.timedelta(seconds=int(float_value))
-    formatted_time = str(time)
+    hours = int(float_value // 3600)
+    minutes = int((float_value % 3600) // 60)
+    seconds = int(float_value % 60)
 
-    if '.' in formatted_time:
-        formatted_time = formatted_time[:-3]
-
+    formatted_time = "{:02d}:{:02d}:{:02d}".format(hours, minutes, seconds)
     return formatted_time
 
 def generate_random_numbers(interval, distribution):
