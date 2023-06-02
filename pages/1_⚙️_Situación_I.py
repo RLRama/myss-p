@@ -145,7 +145,7 @@ def mm1_queue_simulation(arrival_rate, service_rate, simulation_time):
     st.write("### Resultados de la simulación:")
     st.write("- Tiempo de simulación:", simulation_time)
     st.write("- Servicios completados:", num_completed_jobs)
-    st.write("- Tiempo de respuesta promedio (tiempo total de respuesta / trabajos completados):", (average_response_time))
+    st.write("- Tiempo de respuesta promedio (tiempo total de respuesta / trabajos completados):", average_response_time)
     st.write("- Utilización (trabajos completados / reloj):", utilization)
 
     return df
