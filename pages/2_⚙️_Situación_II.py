@@ -16,10 +16,21 @@ st.set_page_config(
     }
 )
 
-# Example usage
-arrival_rate = 0.2
-service_rate = 0.3
-simulation_time = 100
+st.markdown(
+    """
+    # Situación II
+    ## Descripción
+    - Obedece al problema n° 2
+    - Clientes que llegan individualmente en intervalos aleatorios
+    - Cola FIFO (los clientes son atendidos en el orden que llegan)
+    - Tiempos de prestación de servicios de intervalo aleatorios
+    - El servidor abandona el puesto de servicio con intervalos aleatorios de tiempo
+
+    ## Uso
+    - Configure parámetros usando la **👈 barra lateral** para dar valores
+    - Presione el botón **'Simular'** para mostrar la tabla de simulación generada
+    """
+)
 
 with st.sidebar:
     st.header("⌨️")
@@ -32,6 +43,10 @@ with st.sidebar:
         "Intervalo de tiempo de servicio `(min)`",
         0.0, 100.0, (25.0, 75.0)
     )
+    break_rate = st.slider(
+        "Intervalo de tiempo de servicio `(min)`",
+        0.0, 100.0, (25.0, 75.0)
+    )
     simulation_time = st.number_input(
         "Duración de la simulación `(min)`",
         min_value=1.00
@@ -39,22 +54,6 @@ with st.sidebar:
     distribution = st.radio(
     "Distribución a usar para generar los números aleatorios",
     ('uniform', 'gaussian'))
-
-st.markdown(
-    """
-    # Situación I
-    ## Descripción
-    - Obedece al problema n° 1
-    - Clientes que llegan individualmente en intervalos aleatorios
-    - Cola FIFO (los clientes son atendidos en el orden que llegan)
-    - Tiempos de prestación de servicios de intervalo aleatorios
-    - El servidor no abandona el puesto de servicio
-
-    ## Uso
-    - Configure parámetros usando la **👈 barra lateral** para dar valores
-    - Presione el botón **'Simular'** para mostrar la tabla de simulación generada
-    """
-)
 
 def generate_random_numbers(interval, distribution):
     lower_bound = interval[0]
@@ -86,18 +85,39 @@ class Event:
     def __lt__(self, other):
         return self.time < other.time
 
-def mm1_queue_simulation(arrival_rate, service_rate, simulation_time):
+def mm1_queue_simulation(arrival_rate, service_rate, break_rate, return_rate, simulation_time):
     event_queue = []
     data = []
+
     clock = 0
     num_jobs = 0
     num_completed_jobs = 0
     total_response_time = 0
     previous_event_time = 0
     queue_size = 0
+    server_state = "Idle"
+    next_break_time = None
+    return_to_work_time = None
+    current_service_end_time = None
 
     while clock < simulation_time:
-        event_queue.append(Event(clock + generate_random_numbers(arrival_rate, distribution), True))
+        if server_state == "Idle":
+            if next_break_time is None:
+                next_break_time = clock + generate_random_numbers(break_rate)
+            if return_to_work_time is None:
+                return_to_work_time = clock + generate_random_numbers(return_rate)
+
+            if next_break_time <= return_to_work_time:
+                event_queue.append(Event(next_break_time, False))
+                server_state = "Break"
+            else:
+                event_queue.append(Event(return_to_work_time, False))
+                server_state = "Idle"
+                next_break_time = None
+                return_to_work_time = None
+        else:
+            event_queue.append(Event(clock + generate_random_numbers(arrival_rate), True))
+
         event_queue.sort()
         current_event = event_queue.pop(0)
         clock = current_event.time
@@ -105,26 +125,27 @@ def mm1_queue_simulation(arrival_rate, service_rate, simulation_time):
         next_arrival_time = event_queue[0].time if event_queue else None
 
         next_departure_time = None
-        if queue_size > 0:
-            next_departure_time = clock + generate_random_numbers(service_rate, distribution)
-
+        if queue_size > 0 and server_state == "Idle":
+            next_departure_time = clock + generate_random_numbers(service_rate)
 
         data.append({
-            "Evento": "Llegada" if current_event.arrival else "Fin de servicio",
-            "Hora": format_float_as_time(clock),
-            "Siguiente llegada": format_float_as_time(next_arrival_time),
-            "Siguiente fin de servicio": format_float_as_time(next_departure_time),
-            "Clientes en cola": queue_size,
-            "Servidor": "Ocupado" if queue_size > 0 else "Libre"
+            "Event Type": "Arrival" if current_event.arrival else "Departure",
+            "Current Time": clock,
+            "Next Arrival Time": next_arrival_time,
+            "Next Departure Time": next_departure_time,
+            "Queue Size": queue_size,
+            "Server State": server_state,
+            "Next Break Time": next_break_time if server_state == "Idle" else None,
+            "Return to Work Time": return_to_work_time if server_state == "Break" else None
         })
 
         if current_event.arrival:
             num_jobs += 1
-            service_time = generate_random_numbers(service_rate, distribution)
+            service_time = generate_random_numbers(service_rate)
             total_response_time += clock - previous_event_time
             previous_event_time = clock
 
-            if queue_size == 0:
+            if queue_size == 0 and server_state == "Idle":
                 event_queue.append(Event(clock + service_time, False))
             
             queue_size += 1
@@ -132,9 +153,16 @@ def mm1_queue_simulation(arrival_rate, service_rate, simulation_time):
             num_completed_jobs += 1
             queue_size -= 1
 
-            if queue_size > 0:
-                service_time = generate_random_numbers(service_rate, distribution)
+            if queue_size > 0 and server_state == "Idle":
+                service_time = generate_random_numbers(service_rate)
                 event_queue.append(Event(clock + service_time, False))
+            elif queue_size == 0 and server_state == "Break":
+                server_state = "Idle"
+                next_break_time = None
+                return_to_work_time = None
+
+    average_response_time = total_response_time / num_completed_jobs
+    utilization = num_completed_jobs / clock
 
     average_response_time = total_response_time / num_completed_jobs
     utilization = num_completed_jobs / clock
