@@ -23,7 +23,7 @@ simulation_time = 100
 with st.sidebar:
     st.header("⌨️")
     st.subheader("Configurar parámetros")
-    arrival_rate = st.number_input(
+    arrival_rate = st.slider(
         "Intervalo entre llegadas de clientes `(min)`",
         0.0, 100.0, (25.0, 75.0)
     )
