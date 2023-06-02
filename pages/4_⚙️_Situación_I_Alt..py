@@ -58,10 +58,6 @@ st.markdown(
     """
 )
 
-""" bank08_OO: A counter with a random service time """
-from SimPy.Simulation import Simulation,Process,Resource,hold,request,release
-from random import expovariate, seed
-
 ## Model components ------------------------           
 
 class Source(Process):
