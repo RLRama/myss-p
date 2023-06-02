@@ -102,9 +102,9 @@ def mm1_queue_simulation(arrival_rate, service_rate, simulation_time):
 
         data.append({
             "Evento": "Llegada" if current_event.arrival else "Fin de servicio",
-            "Hora": format_float_as_time(clock),
-            "Siguiente llegada": format_float_as_time(next_arrival_time),
-            "Siguiente fin de servicio": format_float_as_time(next_departure_time),
+            "Hora": clock,
+            "Siguiente llegada": next_arrival_time,
+            "Siguiente fin de servicio": next_departure_time,
             "Clientes en cola": queue_size,
             "Servidor": "Ocupado" if queue_size > 0 else "Libre"
         })
