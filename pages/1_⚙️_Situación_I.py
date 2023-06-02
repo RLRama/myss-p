@@ -1,6 +1,7 @@
 import streamlit as st
 import random
 import simpy
+import numpy as np
 import pandas as pd
 
 # Configurar página
@@ -57,18 +58,18 @@ st.markdown(
     """
 )
 
-def source(env, number, interval, counter, results):
+def source(env, number, interval, counter):
     """Source generates customers randomly"""
     for i in range(number):
-        c = customer(env, 'Cliente %04d' % i, counter, time_in_bank=12.0, results=results)
+        c = customer(env, 'Cliente %04d' % i, counter, time_in_bank=12.0)
         env.process(c)
         t = random.expovariate(1.0 / interval)
         yield env.timeout(t)
 
-def customer(env, name, counter, time_in_bank, results):
+def customer(env, name, counter, time_in_bank):
     """Customer arrives, is served and leaves."""
     arrive = env.now
-    results.append((arrive, name, 'Evento de llegada'))
+    st.text('| %04.2f | %s | Evento de llegada |' % (arrive, name))
 
     with counter.request() as req:
         patience = random.uniform(MIN_PATIENCE, MAX_PATIENCE)
@@ -79,15 +80,15 @@ def customer(env, name, counter, time_in_bank, results):
 
         if req in results:
             # Contador
-            results.append((env.now, name, 'Esperó %04.2f min' % wait))
+            st.text('| %04.2f | %s | Esperó %04.2f min |' % (env.now, name, wait))
 
             tib = random.expovariate(1.0 / time_in_bank)
             yield env.timeout(tib)
-            results.append((env.now, name, 'Fin de servicio'))
+            st.text('| %04.2f | %s | Fin de servicio |' % (env.now, name))
 
         else:
             # No se usa porque no hay abandono
-            results.append((env.now, name, 'RENEGED after %6.3f' % wait))
+            st.text('%7.4f %s: RENEGED after %6.3f' % (env.now, name, wait))
 
 # Configurar e iniciar simulación
 random.seed(RANDOM_SEED)
@@ -95,13 +96,9 @@ env = simpy.Environment()
 
 if st.button('Simular'):
     # Iniciar procesos y ejecutar
-    results = []
+    st.text('| Tiempo | N° de cliente | Detalle de evento |')
     counter = simpy.Resource(env, capacity=1)
-    env.process(source(env, NEW_CUSTOMERS, INTERVAL_CUSTOMERS, counter, results))
+    env.process(source(env, NEW_CUSTOMERS, INTERVAL_CUSTOMERS, counter))
     env.run()
-
-    # Mostrar resultados en una tabla
-    df = pd.DataFrame(results, columns=['Tiempo', 'N° de cliente', 'Detalle de evento'])
-    st.table(df)
 else:
     st.text('')
