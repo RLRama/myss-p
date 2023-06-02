@@ -69,13 +69,10 @@ def generate_random_numbers(interval, distribution):
     else:
         raise ValueError("Distribución inválida")
     
-def format_float_as_time(float_minutes):
-    hours = int(float_minutes // 60)
-    minutes = int(float_minutes % 60)
-    seconds = int((float_minutes * 60) % 60)
-
-    formatted_time = "{:02d}:{:02d}:{:02d}".format(hours, minutes, seconds)
-    return formatted_time
+def format_float_as_time(time_in_min):
+    timedelta_object = datetime.timedelta(minutes=time_in_min)
+    formatted_timedelta = timedelta_object.strftime("%H:%M:%S")
+    return formatted_timedelta
 
 class Event:
     def __init__(self, time, arrival):
