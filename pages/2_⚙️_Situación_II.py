@@ -55,7 +55,11 @@ with st.sidebar:
     "Distribución a usar para generar los números aleatorios",
     ('uniform', 'gaussian'))
 
-    return_rate = 
+    return_rate = st.slider(
+        "Intervalo de tiempo de regreso `(min)`",
+        0.0, 100.0, (25.0, 75.0)
+    )
+    
 
 def generate_random_numbers(interval, distribution):
     lower_bound = interval[0]
