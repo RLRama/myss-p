@@ -3,6 +3,7 @@ import random
 import simpy
 import numpy as np
 import pandas as pd
+import random
 
 # Configurar página
 st.set_page_config(
