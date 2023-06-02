@@ -48,9 +48,11 @@ q = st.number_input('Ingrese la cantidad de clientes en cola', min_value=0, valu
 deltaLLegadas = st.slider('Intervalo de llegada de clientes (segundos)', min_value=1, max_value=60, value=45)
 deltaFS = st.slider('Duración del servicio (segundos)', min_value=1, max_value=60, value=40)
 
+num_iteraciones = st.number_input('Ingrese la cantidad de iteraciones de la simulación', min_value=1, value=10, step=1)
+
 # Simulación del sistema de colas
 results = []
-for _ in range(10):  # Realizar 10 iteraciones de simulación
+for _ in range(num_iteraciones):  # Realizar las iteraciones de simulación especificadas
     horaProximaLlegada, horaProximoFinServicio, t_llegada, t_s = llegadas(ps, q, horaActual, deltaLLegadas)
 
     # Guardar los resultados de cada iteración en una lista
