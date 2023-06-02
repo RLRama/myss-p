@@ -109,9 +109,9 @@ def mm1_queue_simulation(arrival_rate, service_rate, break_rate, return_rate, si
     while clock < simulation_time:
         if server_state == "Idle":
             if next_break_time is None:
-                next_break_time = clock + generate_random_numbers(break_rate)
+                next_break_time = clock + generate_random_numbers(break_rate, distribution)
             if return_to_work_time is None:
-                return_to_work_time = clock + generate_random_numbers(return_rate)
+                return_to_work_time = clock + generate_random_numbers(return_rate, distribution)
 
             if next_break_time <= return_to_work_time:
                 event_queue.append(Event(next_break_time, False))
@@ -122,7 +122,7 @@ def mm1_queue_simulation(arrival_rate, service_rate, break_rate, return_rate, si
                 next_break_time = None
                 return_to_work_time = None
         else:
-            event_queue.append(Event(clock + generate_random_numbers(arrival_rate), True))
+            event_queue.append(Event(clock + generate_random_numbers(arrival_rate, distribution), True))
 
         event_queue.sort()
         current_event = event_queue.pop(0)
@@ -132,7 +132,7 @@ def mm1_queue_simulation(arrival_rate, service_rate, break_rate, return_rate, si
 
         next_departure_time = None
         if queue_size > 0 and server_state == "Idle":
-            next_departure_time = clock + generate_random_numbers(service_rate)
+            next_departure_time = clock + generate_random_numbers(service_rate, distribution)
 
         data.append({
             "Event Type": "Arrival" if current_event.arrival else "Departure",
@@ -147,7 +147,7 @@ def mm1_queue_simulation(arrival_rate, service_rate, break_rate, return_rate, si
 
         if current_event.arrival:
             num_jobs += 1
-            service_time = generate_random_numbers(service_rate)
+            service_time = generate_random_numbers(service_rate, distribution)
             total_response_time += clock - previous_event_time
             previous_event_time = clock
 
@@ -160,7 +160,7 @@ def mm1_queue_simulation(arrival_rate, service_rate, break_rate, return_rate, si
             queue_size -= 1
 
             if queue_size > 0 and server_state == "Idle":
-                service_time = generate_random_numbers(service_rate)
+                service_time = generate_random_numbers(service_rate, distribution)
                 event_queue.append(Event(clock + service_time, False))
             elif queue_size == 0 and server_state == "Break":
                 server_state = "Idle"
