@@ -138,6 +138,8 @@ def mm1_queue_simulation(arrival_rate, service_rate, simulation_time):
     df = pd.DataFrame(data)
     return df
 
+st.checkbox("Usar la anchura total", value=False, key="use_container_width")
+
 if st.button ('Simular'):
     df = mm1_queue_simulation(arrival_rate, service_rate, simulation_time)
-    st.dataframe(df)
+    st.dataframe(df, use_container_width=st.session_state.use_container_width)
