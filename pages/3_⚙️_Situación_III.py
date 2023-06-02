@@ -47,6 +47,8 @@ ps = 1 if ps_estado == 'Sí' else 0
 deltaLLegadas = st.slider('Intervalo de llegada de clientes (segundos)', min_value=1, max_value=60, value=45)
 deltaFS = st.slider('Duración del servicio (segundos)', min_value=1, max_value=60, value=40)
 
+q = 0  # Inicializar la variable q
+
 # Simulación del sistema de colas
 results = []
 for _ in range(10):  # Realizar 10 iteraciones de simulación
