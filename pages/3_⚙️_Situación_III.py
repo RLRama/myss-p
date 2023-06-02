@@ -1,104 +1,68 @@
 import streamlit as st
+import datetime as dt
 import random
-import simpy
-import numpy as np
-import pandas as pd
 
-# Configurar página
-st.set_page_config(
-    page_title="Simulación de colas",
-    page_icon="🧪",
-    layout="wide",
-    initial_sidebar_state="auto",
-    menu_items={
-        'About': "MySS - 2023 - UNLaR"
-    }
-)
+# Función para simular la llegada de clientes
+def llegadas(ps, q, horaActual, deltaLLegadas):
+    horaProximaLlegada = horaActual + dt.timedelta(seconds=deltaLLegadas)
+    t_llegada = random.randint(1, 10)  # Generar tiempo de llegada aleatorio
 
-with st.sidebar:
-    st.header("⌨️")
-    st.subheader("Configurar parámetros")
-    INTERVAL_CUSTOMERS = st.number_input(
-        "Tiempo promedio entre llegadas de clientes `(min)`",
-        min_value=1.00
-    )
-    t_serv = st.number_input(
-        "Tiempo promedio de servicio `(min)`",
-        min_value=1.00
-    )
-    NEW_CUSTOMERS = st.number_input(
-        "Clientes generados",
-        min_value=1
-    )
-    t = st.number_input(
-        "Duración de la simulación `(min)`",
-        min_value=1.00
-    )
-    RANDOM_SEED = st.number_input(
-        "Semilla para generar números aleatorios",
-        value=9999, min_value=1
-    )
+    # Calcular el próximo fin de servicio si el puesto de servicio está libre
+    if ps == 0:
+        t_s = random.randint(1, 10)  # Generar tiempo de servicio aleatorio
+        horaProximoFinServicio = horaActual + dt.timedelta(seconds=t_s)
+    else:
+        t_s = 0
+        horaProximoFinServicio = None
 
-MIN_PATIENCE = 9999999999
-MAX_PATIENCE = 9999999999
+    return horaProximaLlegada, horaProximoFinServicio, t_llegada, t_s
 
-st.markdown(
-    """
-    # Situación I
-    ## Descripción
-    - Obedece al problema n° 1
-    - Clientes que llegan individualmente en intervalos aleatorios
-    - Cola FIFO (los clientes son atendidos en el orden que llegan)
-    - Tiempos de prestación de servicios aleatorios
-    - El servidor no abandona el puesto de servicio
 
-    ## Uso
-    - Configure parámetros usando la **👈 barra lateral** para dar valores
-    - Presione el botón **'Simular'** para mostrar la tabla de simulación generada
-    """
-)
+# Función para simular el fin de servicio
+def finservicio(ps, q, horaActual, deltaFS):
+    if q > 0:
+        ps = 1
+        q -= 1
+        t_s = random.randint(1, 10)  # Generar tiempo de servicio aleatorio
+        horaProximoFinServicio = horaActual + dt.timedelta(seconds=t_s)
+    else:
+        ps = 0
+        horaProximoFinServicio = None
 
-def source(env, number, interval, counter):
-    """Source generates customers randomly"""
-    for i in range(number):
-        c = customer(env, 'Cliente %04d' % i, counter, time_in_bank=12.0)
-        env.process(c)
-        t = random.expovariate(1.0 / interval)
-        yield env.timeout(t)
+    return horaProximoFinServicio, t_s
 
-def customer(env, name, counter, time_in_bank):
-    """Customer arrives, is served and leaves."""
-    arrive = env.now
-    st.text('| %04.2f | %s | Evento de llegada |' % (arrive, name))
 
-    with counter.request() as req:
-        patience = random.uniform(MIN_PATIENCE, MAX_PATIENCE)
-        # Esperar al contador o terminar el proceso
-        results = yield req | env.timeout(patience)
+# Configuración de la interfaz de Streamlit
+st.title('Simulación de Sistema de Colas')
+st.write('Ingrese las condiciones iniciales para iniciar la simulación')
 
-        wait = env.now - arrive
+# Entrada manual de las condiciones iniciales
+inicio_simulacion = st.text_input('Ingrese la hora de inicio de la simulación (HH:MM)', value='08:00')
+horaActual = dt.datetime.strptime(inicio_simulacion, '%H:%M')
 
-        if req in results:
-            # Contador
-            st.text('| %04.2f | %s | Esperó %04.2f min |' % (env.now, name, wait))
+ps_estado = st.radio('¿El puesto de servicio está ocupado al inicio de la simulación?', ('Sí', 'No'))
+ps = 1 if ps_estado == 'Sí' else 0
 
-            tib = random.expovariate(1.0 / time_in_bank)
-            yield env.timeout(tib)
-            st.text('| %04.2f | %s | Fin de servicio |' % (env.now, name))
+deltaLLegadas = st.slider('Intervalo de llegada de clientes (segundos)', min_value=1, max_value=60, value=45)
+deltaFS = st.slider('Duración del servicio (segundos)', min_value=1, max_value=60, value=40)
 
-        else:
-            # No se usa porque no hay abandono
-            st.text('%7.4f %s: RENEGED after %6.3f' % (env.now, name, wait))
+# Simulación del sistema de colas
+results = []
+for _ in range(10):  # Realizar 10 iteraciones de simulación
+    horaProximaLlegada, horaProximoFinServicio, t_llegada, t_s = llegadas(ps, q, horaActual, deltaLLegadas)
 
-# Configurar e iniciar simulación
-random.seed(RANDOM_SEED)
-env = simpy.Environment()
+    # Guardar los resultados de cada iteración en una lista
+    results.append((horaActual, horaProximaLlegada, horaProximoFinServicio, q, 'Ocupado' if ps == 1 else 'Desocupado'))
 
-if st.button('Simular'):
-    # Iniciar procesos y ejecutar
-    st.text('| Tiempo | N° de cliente | Detalle de evento |')
-    counter = simpy.Resource(env, capacity=1)
-    env.process(source(env, NEW_CUSTOMERS, INTERVAL_CUSTOMERS, counter))
-    env.run()
-else:
-    st.text('')
+    # Actualizar las variables para la siguiente iteración
+    horaActual = horaProximaLlegada
+
+    if horaProximoFinServicio and horaProximoFinServicio <= horaActual:
+        horaProximoFinServicio, t_s = finservicio(ps, q, horaActual, deltaFS)
+        horaActual = horaProximoFinServicio
+
+# Muestra Resultados
+st.header('Resultados de la simulación')
+st.write('Hora Actual | Hora Próxima Llegada | Hora Próximo Fin de Servicio | Cantidad de Clientes en Cola | Estado del Puesto de Servicio')
+for result in results:
+    st.write(result)
