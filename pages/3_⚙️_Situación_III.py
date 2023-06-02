@@ -58,10 +58,15 @@ for _ in range(num_iteraciones):  # Realizar las iteraciones de simulación espe
     # Guardar los resultados de cada iteración en una lista
     results.append((horaActual, horaProximaLlegada, horaProximoFinServicio, q, 'Ocupado' if ps == 1 else 'Desocupado'))
 
-    # Actualizar las variables para la siguiente iteración
-    horaActual = horaProximaLlegada
+    # Determinar la hora actual para la siguiente iteración
+    if horaProximaLlegada and horaProximoFinServicio:
+        horaActual = min(horaProximaLlegada, horaProximoFinServicio)
+    elif horaProximaLlegada:
+        horaActual = horaProximaLlegada
+    elif horaProximoFinServicio:
+        horaActual = horaProximoFinServicio
 
-    if horaProximoFinServicio and horaProximoFinServicio <= horaActual:
+    if horaProximoFinServicio and horaProximoFinServicio <= horaProximaLlegada:
         horaProximoFinServicio, t_s, ps = finservicio(ps, q, horaActual, deltaFS)
         horaActual = horaProximoFinServicio
         q += 1  # Añadir al cliente atendido a la cola
