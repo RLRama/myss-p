@@ -18,21 +18,6 @@ def llegadas(ps, q, horaActual, deltaLLegadas):
     return horaProximaLlegada, horaProximoFinServicio, t_llegada, t_s
 
 
-# Función para simular el fin de servicio
-def finservicio(ps, q, horaActual, deltaFS):
-    if q > 0:
-        ps = 1
-        q -= 1
-        t_s = random.randint(1, 10)  # Generar tiempo de servicio aleatorio
-        horaProximoFinServicio = horaActual + dt.timedelta(seconds=t_s)
-    else:
-        ps = 0
-        t_s = 0
-        horaProximoFinServicio = None
-
-    return horaProximoFinServicio, t_s
-
-
 # Configuración de la interfaz de Streamlit
 st.title('Simulación de Sistema de Colas')
 st.write('Ingrese las condiciones iniciales para iniciar la simulación')
@@ -41,13 +26,11 @@ st.write('Ingrese las condiciones iniciales para iniciar la simulación')
 inicio_simulacion = st.text_input('Ingrese la hora de inicio de la simulación (HH:MM:SS)', value='08:00:00')
 horaActual = dt.datetime.strptime(inicio_simulacion, '%H:%M:%S')
 
-ps_estado = st.radio('¿El puesto de servicio está ocupado al inicio de la simulación?', ('Sí', 'No'))
-ps = 1 if ps_estado == 'Sí' else 0
+ps = 0  # Estado inicial del puesto de servicio (desocupado)
+q = 0  # Cantidad inicial de clientes en cola
 
 deltaLLegadas = st.slider('Intervalo de llegada de clientes (segundos)', min_value=1, max_value=60, value=45)
 deltaFS = st.slider('Duración del servicio (segundos)', min_value=1, max_value=60, value=40)
-
-q = st.number_input('Ingrese la cantidad de clientes en cola', min_value=0, value=0, step=1)
 
 # Simulación del sistema de colas
 results = []
@@ -62,9 +45,17 @@ for _ in range(10):  # Realizar 10 iteraciones de simulación
     # Actualizar las variables para la siguiente iteración
     horaActual = horaProximaLlegada
 
-    if horaProximoFinServicio and horaProximoFinServicio <= horaActual:
-        horaProximoFinServicio, t_s = finservicio(ps, q, horaActual, deltaFS)
-        horaActual = horaProximoFinServicio
+    if ps == 0:  # El puesto de servicio está libre
+        if q > 0:  # Hay clientes en cola
+            q -= 1
+            t_s = random.randint(1, 10)  # Generar tiempo de servicio aleatorio
+            horaProximoFinServicio = horaActual + dt.timedelta(seconds=t_s)
+            ps = 1  # El puesto de servicio pasa a estar ocupado
+        else:
+            horaProximoFinServicio = None
+    else:  # El puesto de servicio está ocupado
+        if horaProximoFinServicio and horaProximoFinServicio <= horaActual:
+            ps = 0  # El puesto de servicio se desocupa
 
 # Muestra Resultados
 st.header('Resultados de la simulación')
