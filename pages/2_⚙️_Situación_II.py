@@ -44,7 +44,7 @@ with st.sidebar:
         0.0, 100.0, (25.0, 75.0)
     )
     break_rate = st.slider(
-        "Intervalo de tiempo de servicio `(min)`",
+        "Intervalo de tiempo de descanso `(min)`",
         0.0, 100.0, (25.0, 75.0)
     )
     simulation_time = st.number_input(
