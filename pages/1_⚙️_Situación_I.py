@@ -108,11 +108,9 @@ def mm1_queue_simulation(arrival_rate, service_rate, simulation_time):
         if queue_size > 0:
             next_departure_time = clock + generate_random_numbers(service_rate, distribution)
 
-        formatted_clock = format_float_as_time(clock)
-
         data.append({
             "Evento": "Llegada" if current_event.arrival else "Fin de servicio",
-            "Hora": formatted_clock,
+            "Hora": format_float_as_time(clock),
             "Siguiente llegada": next_arrival_time,
             "Siguiente fin de servicio": next_departure_time,
             "Clientes en cola": queue_size,
