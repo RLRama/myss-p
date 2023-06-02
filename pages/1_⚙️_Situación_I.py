@@ -130,13 +130,14 @@ def mm1_queue_simulation(arrival_rate, service_rate, simulation_time):
     average_response_time = total_response_time / num_completed_jobs
     utilization = num_completed_jobs / clock
 
+    df = pd.DataFrame(data)
+
     st.write("### Resultados de la simulación:")
     st.write("- Tiempo de simulación:", simulation_time)
     st.write("- Servicios completados:", num_completed_jobs)
     st.write("- Tiempo de respuesta promedio (tiempo total de respuesta / trabajos completados):", (average_response_time))
     st.write("- Utilización (trabajos completados / reloj):", utilization)
 
-    df = pd.DataFrame(data)
     return df
 
 st.checkbox("Usar ancho total de la página", value=False, key="use_container_width")
