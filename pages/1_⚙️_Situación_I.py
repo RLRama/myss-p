@@ -56,10 +56,12 @@ st.markdown(
     """
 )
 
-def format_float_as_time(clock):
-    total_seconds = int(clock * 60)
-    time = datetime.time(0, 0, total_seconds)
-    formatted_time = time.strftime("%H:%M:%S")
+def format_float_as_time(float_value):
+    time = datetime.timedelta(seconds=int(float_value))
+    formatted_time = str(time)
+
+    if '.' in formatted_time:
+        formatted_time = formatted_time[:-3]
 
     return formatted_time
 
