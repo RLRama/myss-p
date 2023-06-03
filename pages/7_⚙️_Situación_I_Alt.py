@@ -59,7 +59,7 @@ def mm1_simulation(arrival_rate, service_rate, simulation_time):
     total_customers_served = 0
     total_waiting_time = 0
 
-    print("Iteration\tClock\tQueue\tTotal Served\tWaiting Time")
+    st.text("Iteration\tClock\tQueue\tTotal Served\tWaiting Time")
     iteration = 1
 
     while clock < simulation_time:
@@ -95,4 +95,4 @@ service_rate = 7  # average service rate of 7 customers per unit of time
 simulation_time = 1000
 
 average_waiting_time = mm1_simulation(arrival_rate, service_rate, simulation_time)
-print("\nAverage waiting time:", average_waiting_time)
+st.text("\nAverage waiting time:", average_waiting_time)
