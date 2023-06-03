@@ -99,14 +99,14 @@ queue_df = pd.DataFrame(columns=["Hora actual", "Event", "Customers in Queue", "
 def handle_arrival(time, queue, arrival_interval):
     """Añade un cliente a la cola cuando el evento es de llegada."""
     queue.append(time)
-    queue_df.loc[len(queue_df)] = [time, "Arrival", len(queue), "", ""]
+    queue_df.loc[len(queue_df)] = [time, "Llegada", len(queue), "", ""]
 
 # Definir función para manejar salidas
 def handle_departure(time, queue, departure_interval):
     """Quita un cliente de la cola cuando el evento es de salida."""
     if len(queue) > 0:
         queue.pop(0)
-    queue_df.loc[len(queue_df)] = [time, "Service Completion", len(queue), "", ""]
+    queue_df.loc[len(queue_df)] = [time, "Fin de servicio", len(queue), "", ""]
 
 # Simula los eventos de cola
 queue = []
