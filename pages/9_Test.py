@@ -72,17 +72,17 @@ def simulate_mm1_queue(arrival_rate, service_rate, simulation_time, initial_queu
     event_list = []
     time = 0
     queue_size = initial_queue_size
-    next_arrival_time = np.random.exponential(scale=1/arrival_rate)
+    next_arrival_time = generate_random_number(arr_interval, distribution)
     next_departure_time = np.inf
 
     while time < simulation_time:
         if next_arrival_time < next_departure_time:
             event_type = 'Arrival'
             time = next_arrival_time
-            next_arrival_time += np.random.exponential(scale=1/arrival_rate)
+            next_arrival_time += generate_random_number(arr_interval, distribution)
 
             if queue_size == 0:
-                next_departure_time = time + np.random.exponential(scale=1/service_rate)
+                next_departure_time = time + generate_random_number(arr_interval, distribution)
 
             queue_size += 1
         else:
@@ -94,7 +94,7 @@ def simulate_mm1_queue(arrival_rate, service_rate, simulation_time, initial_queu
                 queue_size -= 1
 
             if queue_size > 0:
-                next_departure_time = time + np.random.exponential(scale=1/service_rate)
+                next_departure_time = time + generate_random_number(serv_interval, distribution)
 
         event_list.append({
             'Time': time,
