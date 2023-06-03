@@ -42,12 +42,12 @@ def add_breaks(queue_df, break_interval, service_interval, break_duration):
             queue_df.loc[i, "Clientes en cola"] = len(queue_df) - i
             queue_df.loc[i, "Hora sig. llegada"] = ""
             queue_df.loc[i, "Hora sig. fin de servicio"] = ""
-            for j in range(i, min(i + service_interval, len(queue_df))):
+            for j in range(i, min(i + service_interval[1], len(queue_df))):
                 queue_df.loc[j, "Evento"] = "Servicio antes de descanso"
                 queue_df.loc[j, "Clientes en cola"] = len(queue_df) - j
                 queue_df.loc[j, "Hora sig. llegada"] = ""
                 queue_df.loc[j, "Hora sig. fin de servicio"] = ""
-            for k in range(min(i + service_interval, len(queue_df)), min(i + service_interval + break_duration, len(queue_df))):
+            for k in range(min(i + service_interval[1], len(queue_df)), min(i + service_interval[1] + break_duration, len(queue_df))):
                 queue_df.loc[k, "Evento"] = "Descanso"
                 queue_df.loc[k, "Clientes en cola"] = len(queue_df) - k
                 queue_df.loc[k, "Hora sig. llegada"] = ""
