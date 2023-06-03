@@ -48,7 +48,7 @@ st.markdown(
     """
 )
 
-# Mostar parámetros en la barra lateral
+# Mostrar parámetros en la barra lateral
 with st.sidebar:
     st.header("⌨️")
     st.subheader("Parámetros")
@@ -131,7 +131,7 @@ for t in range(1, queue_duration + 1):  # Salta la primera fila
     queue_df.loc[len(queue_df) - 1, "Hora sig. llegada"] = next_arrival if t < next_arrival else ""
     queue_df.loc[len(queue_df) - 1, "Hora sig. fin de servicio"] = next_departure if t < next_departure else ""
 
-# Reinicia el índice del datafram
+# Reinicia el índice del dataframe
 queue_df.reset_index(drop=True, inplace=True)
 
 # Convierte las columnas del dataframe a ints, y se encarga de los strings vacíos
