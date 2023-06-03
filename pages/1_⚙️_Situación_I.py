@@ -18,22 +18,6 @@ st.set_page_config(
 
 st.markdown(
     """
-    # Situación I
-    ## Descripción
-    - Obedece al problema n° 1
-    - Clientes que llegan individualmente en intervalos aleatorios
-    - Cola FIFO (los clientes son atendidos en el orden que llegan)
-    - Tiempos de prestación de servicios de intervalo aleatorios
-    - El servidor no abandona el puesto de servicio
-
-    ## Uso
-    - Configure parámetros usando la **👈 barra lateral** para dar valores
-    - Presione el botón **'Simular'** para mostrar la tabla de simulación generada
-    """
-)
-
-st.markdown(
-    """
     ## Situación I
     ### Descripción
     - Problema I
@@ -55,13 +39,13 @@ with st.sidebar:
     
     # Slider para el intervalo entre llegadas de clientes
     arr_interval = st.slider(
-        "Intervalo de tiempo entre llegadas (sec)",
+        "Intervalo de tiempo entre llegadas (seg)",
         1, 100, (25, 75)
     )
     
     # Slider para el tiempo de trabajo
     serv_interval = st.slider(
-        "Intervalo de tiempo de servicio (sec)",
+        "Intervalo de tiempo de servicio (seg)",
         1, 100, (25, 75)
     )
     
