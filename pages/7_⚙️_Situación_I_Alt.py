@@ -90,7 +90,7 @@ def mm1_simulation(arrival_rate, service_rate, simulation_time):
 # Example usage
 arrival_rate = 5  # average arrival rate of 5 customers per unit of time
 service_rate = 7  # average service rate of 7 customers per unit of time
-simulation_time = 1000
+simulation_time = 100
 
 if st.button('Simular'):
     average_waiting_time = mm1_simulation(arrival_rate, service_rate, simulation_time)
