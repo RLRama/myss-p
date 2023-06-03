@@ -60,35 +60,39 @@ def generate_random_number(interval):
     upper_bound = interval[1]
     return random.randint(lower_bound, upper_bound)
 
+import pandas as pd
+import random
+
 # Create an empty DataFrame to store the queue events
-queue_df = pd.DataFrame(columns=["Time", "Event", "Queue Size"])
+queue_df = pd.DataFrame(columns=["Time", "Event", "Queue Size", "Next Arrival", "Next Departure"])
 
 # Define a function to handle arrivals
-def handle_arrival(time, queue):
+def handle_arrival(time, queue, arrival_interval):
     queue.append(time)
-    queue_df.loc[len(queue_df)] = [time, "Arrival", len(queue)]
+    queue_df.loc[len(queue_df)] = [time, "Arrival", len(queue), "", ""]
 
 # Define a function to handle departures
-def handle_departure(time, queue):
+def handle_departure(time, queue, departure_interval):
     if len(queue) > 0:
         queue.pop(0)
-    queue_df.loc[len(queue_df)] = [time, "Departure", len(queue)]
-
+    queue_df.loc[len(queue_df)] = [time, "Departure", len(queue), "", ""]
 
 # Simulate the queue events
-queue = []
-arrival_interval = generate_random_number(arr_interval)  # Random interval for arrivals
-departure_interval = generate_random_number(serv_interval)  # Random interval for departures
-
-queue.extend([0] * initial_queue_size)
+queue = []  # Number of time units to simulate the queue
 
 for t in range(queue_duration):
-    if t % arrival_interval == 0:  # Check if it's an arrival time
-        handle_arrival(t, queue)
-        arrival_interval = generate_random_number(arr_interval)  # Generate a new random arrival interval
-    if t % departure_interval == 0:  # Check if it's a departure time
-        handle_departure(t, queue)
-        departure_interval = generate_random_number(serv_interval)  # Generate a new random departure interval
+    arrival_interval = generate_random_number(arr_interval)
+    departure_interval = generate_random_number(serv_interval)
+    next_arrival = "" if t % arrival_interval != 0 else t + arrival_interval
+    next_departure = "" if t % departure_interval != 0 else t + departure_interval
 
-if st.button('Simular'):
-    st.dataframe(queue_df)
+    if t % arrival_interval == 0:  # Check if it's an arrival time
+        handle_arrival(t, queue, arrival_interval)
+    if t % departure_interval == 0:  # Check if it's a departure time
+        handle_departure(t, queue, departure_interval)
+
+    queue_df.loc[len(queue_df) - 1, "Next Arrival"] = next_arrival
+    queue_df.loc[len(queue_df) - 1, "Next Departure"] = next_departure
+
+# Print the queue DataFrame
+print(queue_df)
