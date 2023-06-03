@@ -43,7 +43,7 @@ with st.sidebar:
         "Intervalo de tiempo de servicio (seg)",
         1, 100, (25, 75)
     )
-    simulation_time = st.number_input(
+    queue_duration = st.number_input(
         "Duración de la simulación (seg)",
         min_value=1
     )
@@ -74,11 +74,10 @@ def handle_departure(time, queue):
         queue.pop(0)
     queue_df.loc[len(queue_df)] = [time, "Departure", len(queue)]
 
+
 # Simulate the queue events
 queue = []
-queue_duration = 50  # Number of time units to simulate the queue
-arrival_interval = random.randint(1, 4)  # Random interval for arrivals
-departure_interval = random.randint(2, 5)  # Random interval for departures
+queue.extend([0] * initial_queue_size)
 
 for t in range(queue_duration):
     if t % arrival_interval == 0:  # Check if it's an arrival time
