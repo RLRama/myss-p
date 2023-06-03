@@ -86,7 +86,7 @@ queue.extend([0] * initial_queue_size)
 next_arrival = generate_random_number(arr_interval)
 next_departure = generate_random_number(serv_interval)
 
-for t in range(queue_duration):
+for t in range(1, queue_duration + 1):  # Start from 1 to skip the initial row
     if t == next_arrival:
         handle_arrival(t, queue, next_arrival)
         next_arrival += generate_random_number(arr_interval)
@@ -96,6 +96,9 @@ for t in range(queue_duration):
 
     queue_df.loc[len(queue_df) - 1, "Next Arrival"] = next_arrival if t < next_arrival else ""
     queue_df.loc[len(queue_df) - 1, "Next Departure"] = next_departure if t < next_departure else ""
+
+# Reset the index of the DataFrame
+queue_df.reset_index(drop=True, inplace=True)
 
 # Print the queue DataFrame
 if st.button('Simular'):
