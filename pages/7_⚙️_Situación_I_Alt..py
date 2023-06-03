@@ -51,44 +51,48 @@ st.markdown(
     """
 )
 
-class MM1Queue:
-    def __init__(self, arrival_rate, service_rate, num_customers):
-        self.arrival_rate = arrival_rate
-        self.service_rate = service_rate
-        self.num_customers = num_customers
-        self.queue = []
-        self.data = {'Arrival Time': [], 'Service Time': [], 'Waiting Time': []}
+import random
 
-    def run_simulation(self):
-        arrival_time = 0
-        for i in range(self.num_customers):
-            interarrival_time = random.expovariate(self.arrival_rate)
-            arrival_time += interarrival_time
+def mm1_simulation(arrival_rate, service_rate, simulation_time):
+    clock = 0
+    queue = 0
+    total_customers_served = 0
+    total_waiting_time = 0
 
-            if len(self.queue) > 0:
-                waiting_time = max(0, self.queue[-1] - arrival_time)
-            else:
-                waiting_time = 0
+    print("Iteration\tClock\tQueue\tTotal Served\tWaiting Time")
+    iteration = 1
 
-            service_time = random.expovariate(self.service_rate)
-            departure_time = arrival_time + service_time
+    while clock < simulation_time:
+        inter_arrival_time = 1 / arrival_rate
+        clock += inter_arrival_time
 
-            self.queue.append(departure_time)
-            self.queue = [x for x in self.queue if x > arrival_time]
+        if clock >= simulation_time:
+            break
 
-            self.data['Arrival Time'].append(arrival_time)
-            self.data['Service Time'].append(service_time)
-            self.data['Waiting Time'].append(waiting_time)
+        total_customers_served += 1
 
-        df = pd.DataFrame(self.data)
-        return df
+        if queue == 0:
+            service_time = 1 / service_rate
+            total_waiting_time += service_time
+            departure_time = clock + service_time
+        else:
+            queue -= 1
+            service_time = 1 / service_rate
+            total_waiting_time += service_time
+            departure_time = clock + service_time
 
-arrival_rate = 0.2
-service_rate = 0.3
-num_customers = 10
+        queue += 1
 
-mm1_queue = MM1Queue(arrival_rate, service_rate, num_customers)
-df = mm1_queue.run_simulation()
+        print(f"{iteration}\t\t{clock:.2f}\t{queue}\t{total_customers_served}\t\t{total_waiting_time:.2f}")
+        iteration += 1
 
-if st.button('Simular'):
-    st.dataframe(df)
+    average_waiting_time = total_waiting_time / total_customers_served
+    return average_waiting_time
+
+# Example usage
+arrival_rate = 5  # average arrival rate of 5 customers per unit of time
+service_rate = 7  # average service rate of 7 customers per unit of time
+simulation_time = 1000
+
+average_waiting_time = mm1_simulation(arrival_rate, service_rate, simulation_time)
+print("\nAverage waiting time:", average_waiting_time)
