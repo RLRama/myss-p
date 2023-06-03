@@ -117,7 +117,8 @@ if __name__ == '__main__':
   simulation_time = 100.0
 
   # Simulate the queue and print the results to a DataFrame.
+if st.button('Simular'):
   df = simulate_mm1_queue(arrival_rate, service_rate, simulation_time)
   print(df)
 
-# if st.button('Simular'):
+# 
