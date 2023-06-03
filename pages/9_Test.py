@@ -58,6 +58,8 @@ def generate_random_number(interval):
     return random.randint(lower_bound, upper_bound)
 
 def format_time(seconds):
+    if seconds == '':
+        return ''
     hours = seconds // 3600
     minutes = (seconds % 3600) // 60
     seconds = seconds % 60
