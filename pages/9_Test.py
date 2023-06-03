@@ -51,44 +51,30 @@ st.markdown(
     """
 )
 
-def single_server_queue_simulation(num_iterations, arrival_time, service_time):
-    # Initialize the dataframe
-    df = pd.DataFrame(columns=['Iteration', 'Arrival Time', 'Service Start Time', 'Service End Time', 'Waiting Time'])
-
-    # Set the initial values
-    arrival = 0
-    service_start = 0
-    service_end = 0
-    waiting_time = 0
-
+def simulate_queue(arrival_time, departure_time, num_iterations):
+    queue = []
+    df = pd.DataFrame(columns=['Iteration', 'Arrival', 'Departure', 'Queue'])
+    
     for i in range(num_iterations):
-        # Calculate the arrival time
-        arrival += arrival_time
-
-        # Calculate the service start time
-        service_start = max(arrival, service_end)
-
-        # Calculate the service end time
-        service_end = service_start + service_time
-
-        # Calculate the waiting time
-        waiting_time = service_start - arrival
-
-        # Append the iteration to the dataframe
-        df = df.append({'Iteration': i + 1, 'Arrival Time': arrival, 'Service Start Time': service_start, 'Service End Time': service_end, 'Waiting Time': waiting_time}, ignore_index=True)
-
+        if not queue:
+            departure = arrival_time + departure_time
+        else:
+            departure = max(queue) + departure_time
+        
+        queue.append(departure)
+        df.loc[i] = [i+1, arrival_time, departure, len(queue)]
+        
+        arrival_time += arrival_time
+    
     return df
 
-# Set the parameters
-num_iterations = 10
+# Example usage
+iterations = 20
 arrival_time = 2
-service_time = 3
+departure_time = 3
 
-# Run the simulation
-simulation_df = single_server_queue_simulation(num_iterations, arrival_time, service_time)
-
-
+df = simulate_queue(arrival_time, departure_time, iterations)
 
 # Print the dataframe
 if st.button('Simular'):
-    st.dataframe(simulation_df)
+    st.dataframe(df)
