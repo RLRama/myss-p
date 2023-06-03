@@ -39,7 +39,7 @@ st.markdown(
     """
     ## Situación I
     ### Descripción
-    - Problema n° 1
+    - Problema I
     - Tiempos de llegadas de clientes aleatorios (dentro de un intervalo dado)
     - Cola FIFO (los clientes son atendidos en el orden que llegan)
     - Tiempos de prestación de servicios aleatorios (dentro de un intervalo dado)
@@ -51,30 +51,55 @@ st.markdown(
     """
 )
 
-def simulate_queue(arrival_time, departure_time, num_iterations):
+import pandas as pd
+
+def single_server_queue_simulation(arrival_time, departure_time, num_iterations):
     queue = []
-    df = pd.DataFrame(columns=['Iteration', 'Arrival', 'Departure', 'Queue'])
-    
+    wait_times = []
+    arrival_times = []
+    departure_times = []
+
+    current_time = 0
+    departure = departure_time
+    num_customers = 0
+
     for i in range(num_iterations):
-        if not queue:
-            departure = arrival_time + departure_time
-        else:
-            departure = max(queue) + departure_time
-        
-        queue.append(departure)
-        df.loc[i] = [i+1, arrival_time, departure, len(queue)]
-        
-        arrival_time += arrival_time
-    
+        if current_time == departure:
+            num_customers -= 1
+            if queue:
+                departure = current_time + departure_time
+                wait_times.append(current_time - queue.pop(0))
+                departure_times.append(departure)
+            else:
+                departure = float('inf')
+        if current_time == arrival_time:
+            num_customers += 1
+            if num_customers == 1:
+                departure = current_time + departure_time
+            queue.append(current_time)
+            arrival_time += arrival_time
+
+        current_time = min(arrival_time, departure)
+        arrival_times.append(arrival_time)
+
+    data = {
+        'Iteration': list(range(1, num_iterations+1)),
+        'Arrival Time': arrival_times,
+        'Departure Time': departure_times,
+        'Wait Time': wait_times
+    }
+    df = pd.DataFrame(data)
     return df
 
-# Example usage
-iterations = 20
+# Simulation parameters
 arrival_time = 2
 departure_time = 3
+num_iterations = 10
 
-df = simulate_queue(arrival_time, departure_time, iterations)
+# Run simulation and print dataframe
+
 
 # Print the dataframe
 if st.button('Simular'):
-    st.dataframe(df)
+    simulation_df = single_server_queue_simulation(arrival_time, departure_time, num_iterations)
+    st.dataframe(simulation_df)
