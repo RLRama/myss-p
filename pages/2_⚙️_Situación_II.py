@@ -55,12 +55,13 @@ with st.sidebar:
         1, 100, (25, 75)
     )
 
-    # Slider para la duración y frecuencia de las pausas del servidor
+    # Slider para la duración   de las pausas del servidor
     break_duration = st.slider(
         "Intervalo de tiempo de descanso del servidor (sec)",
         1, 100, (25, 75)
     )
     
+    # Slider para la frecuencia de las pausas del servidor
     break_frequency = st.slider(
         "Intervalo de tiempo de servicio antes del descanso del servidor (sec)",
         1, 100, (25, 75)
@@ -103,8 +104,8 @@ def handle_arrival(time, queue, arrival_interval, break_frequency):
     queue_df.loc[len(queue_df)] = [time, "Llegada", len(queue), "", ""]
 
     # Si hay una pausa en el momento de la llegada, se agrega el tiempo de la pausa al próximo evento de salida
-    if (time % break_frequency) == 0:
-        return time + break_duration
+    if (time % generate_random_number(break_frequency)) == 0:
+        return time + generate_random_number(break_duration)
     else:
         return time
 
@@ -116,8 +117,8 @@ def handle_departure(time, queue, departure_interval, break_frequency):
         queue_df.loc[len(queue_df)] = [time, "Fin de servicio", len(queue), "", ""]
 
         # Si hay una pausa en el momento de la salida, se agrega el tiempo de la pausa al próximo evento de salida
-        if (time % break_frequency) == 0:
-            return time + departure_interval + break_duration
+        if (time % generate_random_number(break_frequency)) == 0:
+            return time + departure_interval + generate_random_number(break_duration)
         else:
             return time + departure_interval
     else:
