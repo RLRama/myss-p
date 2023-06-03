@@ -83,7 +83,7 @@ def mm1_simulation(arrival_rate, service_rate, simulation_time):
 
         queue += 1
 
-        print(f"{iteration}\t\t{clock:.2f}\t{queue}\t{total_customers_served}\t\t{total_waiting_time:.2f}")
+        st.text(f"{iteration}\t\t{clock:.2f}\t{queue}\t{total_customers_served}\t\t{total_waiting_time:.2f}")
         iteration += 1
 
     average_waiting_time = total_waiting_time / total_customers_served
