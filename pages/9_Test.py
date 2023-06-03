@@ -47,6 +47,10 @@ with st.sidebar:
         "Duración de la simulación (seg)",
         min_value=1
     )
+    initial_queue_size = st.number_input(
+        "Clientes en cola al inicio",
+        min_value=0
+    )
     distribution = st.radio(
     "Distribución a usar para generar los números aleatorios",
     ('uniforme', 'gaussiana'))
@@ -64,10 +68,10 @@ def generate_random_number(interval, distribution):
     else:
         raise ValueError("Invalid distribution specified.")
 
-def simulate_mm1_queue(arrival_rate, service_rate, simulation_time):
+def simulate_mm1_queue(arr_interval, serv_interval, simulation_time, initial_queue_size):
     event_list = []
     time = 0
-    queue_size = 0
+    queue_size = initial_queue_size
     next_arrival_time = generate_random_number(arr_interval, distribution)
     next_departure_time = np.inf
 
@@ -104,5 +108,5 @@ def simulate_mm1_queue(arrival_rate, service_rate, simulation_time):
     return df
 
 if st.button('Simular'):
-    df = simulate_mm1_queue(arr_interval, serv_interval, simulation_time)
+    df = simulate_mm1_queue(arr_interval, serv_interval, simulation_time, initial_queue_size)
     st.dataframe(df)
