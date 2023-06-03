@@ -71,18 +71,18 @@ def generate_random_number(interval, distribution):
 def simulate_mm1_queue(arrival_rate, service_rate, simulation_time, initial_queue_size):
     event_list = []
     time = 0
-    queue_size = initial_queue_size
+    queue_size = max(0, initial_queue_size)
     next_arrival_time = generate_random_number(arr_interval, distribution)
     next_departure_time = np.inf
 
-    while time < simulation_time:
+    while time < simulation_time or queue_size > 0:
         if next_arrival_time < next_departure_time:
             event_type = 'Arrival'
             time = next_arrival_time
             next_arrival_time += generate_random_number(arr_interval, distribution)
 
             if queue_size == 0:
-                next_departure_time = time + generate_random_number(arr_interval, distribution)
+                next_departure_time = time + generate_random_number(serv_interval, distribution)
 
             queue_size += 1
         else:
