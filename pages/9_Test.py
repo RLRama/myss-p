@@ -77,6 +77,10 @@ def handle_departure(time, queue):
 
 # Simulate the queue events
 queue = []
+queue_duration = 50  # Number of time units to simulate the queue
+arrival_interval = generate_random_number(arr_interval)  # Random interval for arrivals
+departure_interval = generate_random_number(serv_interval)  # Random interval for departures
+
 queue.extend([0] * initial_queue_size)
 
 for t in range(queue_duration):
