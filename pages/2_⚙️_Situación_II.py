@@ -88,7 +88,7 @@ def format_time(seconds):
 
 # Crea un dataframe vacío para los eventos de la cola
 queue_df = pd.DataFrame(
-    columns=["Hora actual", "Evento", "Clientes en cola", "Hora sig. llegada", "Hora sig. fin de servicio"]
+    columns=["Hora actual", "Evento", "Clientes en cola", "Hora sig. llegada", "Hora sig. fin de servicio", "Descanso"]
 )
 
 # Definir función para manejar llegadas
@@ -103,21 +103,21 @@ def handle_arrival(time, queue, arrival_interval, departure_interval):
         queue_df.loc[len(queue_df) - 1, "Hora sig. fin de servicio"] = next_departure
 
 
-# Definir función para manejar salidas
 def handle_departure(time, queue, departure_interval, break_interval):
     """Quita un cliente de la cola cuando el evento es de salida."""
     if len(queue) > 0:
         queue.pop(0)
-    queue_df.loc[len(queue_df)] = [time, "Fin de servicio", len(queue), "", ""]
+    queue_df.loc[len(queue_df)] = [time, "Fin de servicio", len(queue), "", "", on_break]
 
-    # Si hay más clientes en la cola, programar el próximo evento de salida
     if len(queue) > 0:
         next_departure = time + generate_random_number(departure_interval)
         queue_df.loc[len(queue_df) - 1, "Hora sig. fin de servicio"] = next_departure
+
     else:
         # Si la cola está vacía, el servidor puede tomar un descanso
         break_time = time + generate_random_number(break_interval)
         queue_df.loc[len(queue_df) - 1, "Hora sig. fin de servicio"] = break_time
+        queue_df.loc[len(queue_df) - 1, "Descanso"] = True
 
 
 # Simula los eventos de cola
@@ -137,21 +137,19 @@ for t in range(1, queue_duration + 1):
         handle_arrival(t, queue, arr_interval, serv_interval)
         next_arrival += generate_random_number(arr_interval)
 
-        # Si no hay un servicio en curso, programar el próximo evento de salida
         if next_departure == float("inf"):
             next_departure = t + generate_random_number(serv_interval)
             queue_df.loc[len(queue_df) - 1, "Hora sig. fin de servicio"] = next_departure
 
-    if t == next_departure and not on_break:
+    if t == next_departure:
         handle_departure(t, queue, serv_interval, break_interval)
 
-        # El servidor retoma el servicio después del descanso
         if t >= next_departure:
             next_departure = float("inf")
             on_break = False
 
-    # Actualiza los tiempos de llegada en el dataframe
     queue_df.loc[len(queue_df) - 1, "Hora sig. llegada"] = next_arrival if t < next_arrival else ""
+    queue_df.loc[len(queue_df) - 1, "Descanso"] = on_break
 
 # Reinicia el índice del dataframe
 queue_df.reset_index(drop=True, inplace=True)
