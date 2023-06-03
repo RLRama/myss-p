@@ -57,12 +57,6 @@ def generate_random_number(interval):
     upper_bound = interval[1]
     return random.randint(lower_bound, upper_bound)
 
-def format_time(time):
-    hours = time // 3600
-    minutes = (time % 3600) // 60
-    seconds = time % 60
-    return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
-
 # Create an empty DataFrame to store the queue events
 queue_df = pd.DataFrame(columns=["Time", "Event", "Queue Size", "Next Arrival", "Next Departure"])
 
@@ -96,10 +90,6 @@ for t in range(1, queue_duration + 1):  # Start from 1 to skip the initial row
 
     queue_df.loc[len(queue_df) - 1, "Next Arrival"] = next_arrival if t < next_arrival else ""
     queue_df.loc[len(queue_df) - 1, "Next Departure"] = next_departure if t < next_departure else ""
-
-queue_df["Time"] = queue_df["Time"].apply(format_time)
-queue_df["Next Arrival"] = queue_df["Next Arrival"].apply(format_time)
-queue_df["Next Departure"] = queue_df["Next Departure"].apply(format_time)
 
 # Reset the index of the DataFrame
 queue_df.reset_index(drop=True, inplace=True)
