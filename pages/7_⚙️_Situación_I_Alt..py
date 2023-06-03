@@ -89,3 +89,5 @@ if st.button('Simular'):
     mm1_queue = MM1Queue(arrival_rate, service_rate, num_customers)
     df = mm1_queue.run_simulation()
     st.dataframe(df)
+else:
+    st.write('')
