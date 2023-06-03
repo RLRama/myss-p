@@ -156,10 +156,10 @@ queue_df.reset_index(drop=True, inplace=True)
 
 # Convierte las columnas del dataframe a ints, y se encarga de los strings vacíos
 queue_df["Hora actual"] = queue_df["Hora actual"].astype(int)
-queue_df["Hora sig. llegada"] = queue_df["Hora sig. llegada"].apply(lambda x: int(x) if x else "")
-queue_df["Hora sig. fin de servicio"] = queue_df["Hora sig. fin de servicio"].apply(lambda x: int(x) if x else "")
-queue_df["Hora sig. inicio de descanso"] = queue_df["Hora sig. inicio de descanso"].apply(lambda x: int(x) if x else "")
-queue_df["Hora sig. fin de descanso"] = queue_df["Hora sig. fin de descanso"].apply(lambda x: int(x) if x else "")
+queue_df["Hora sig. llegada"] = queue_df["Hora sig. llegada"].apply(lambda x: int(x) if x else None)
+queue_df["Hora sig. fin de servicio"] = queue_df["Hora sig. fin de servicio"].apply(lambda x: int(x) if x else None)
+queue_df["Hora sig. inicio de descanso"] = queue_df["Hora sig. inicio de descanso"].apply(lambda x: int(x) if x else None)
+queue_df["Hora sig. fin de descanso"] = queue_df["Hora sig. fin de descanso"].apply(lambda x: int(x) if x else None)
 
 # Aplica la función de formateo de tiempo a las columnas de tiempo
 queue_df["Hora actual"] = queue_df["Hora actual"].apply(format_time)
