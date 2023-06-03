@@ -79,7 +79,7 @@ def generate_random_number(interval):
 def format_time(seconds):
     """Pasa de segundos a formato HH:MM:SS"""
     if not seconds:
-        return ''
+        return ""
     hours = seconds // 3600
     minutes = (seconds % 3600) // 60
     seconds = seconds % 60
@@ -160,5 +160,5 @@ queue_df["Hora sig. llegada"] = queue_df["Hora sig. llegada"].apply(format_time)
 queue_df["Hora sig. fin de servicio"] = queue_df["Hora sig. fin de servicio"].apply(format_time)
 
 # Muestra el dataframe cuando se hace clic al botón
-if st.button('Simular'):
+if st.button("Simular"):
     st.dataframe(queue_df)
