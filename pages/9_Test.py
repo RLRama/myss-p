@@ -68,45 +68,28 @@ def generate_random_number(interval, distribution):
     else:
         raise ValueError("Invalid distribution specified.")
 
-def simulate_mm1_queue(arrival_rate, service_rate, simulation_time, initial_queue_size):
-    event_list = []
-    time = 0
-    queue_size = max(0, initial_queue_size)
-    next_arrival_time = generate_random_number(arr_interval, distribution)
-    next_departure_time = np.inf
+# Create an empty DataFrame to store the queue events
+queue_df = pd.DataFrame(columns=["Time", "Event", "Queue Size"])
 
-    while time < simulation_time or queue_size > 0:
-        if next_arrival_time < next_departure_time:
-            event_type = 'Arrival'
-            time = next_arrival_time
-            next_arrival_time += generate_random_number(arr_interval, distribution)
+# Define a function to handle arrivals
+def handle_arrival(time, queue):
+    queue.append(time)
+    queue_df.loc[len(queue_df)] = [time, "Arrival", len(queue)]
 
-            if queue_size == 0:
-                next_departure_time = time + generate_random_number(serv_interval, distribution)
+# Define a function to handle departures
+def handle_departure(time, queue):
+    if len(queue) > 0:
+        queue.pop(0)
+    queue_df.loc[len(queue_df)] = [time, "Departure", len(queue)]
 
-            queue_size += 1
-        else:
-            event_type = 'Departure'
-            time = next_departure_time
-            next_departure_time = np.inf
+# Simulate the queue events
+queue = []
 
-            if queue_size > 0:
-                queue_size -= 1
-
-            if queue_size > 0:
-                next_departure_time = time + generate_random_number(serv_interval, distribution)
-
-        event_list.append({
-            'Time': time,
-            'Event': event_type,
-            'Queue Size': queue_size,
-            'Next Arrival Time': next_arrival_time,
-            'Next Departure Time': next_departure_time
-        })
-
-    df = pd.DataFrame(event_list)
-    return df
+for t in range(simulation_time):
+    if t % arr_interval == 0:  # Check if it's an arrival time
+        handle_arrival(t, queue)
+    if t % serv_interval == 0:  # Check if it's a departure time
+        handle_departure(t, queue)
 
 if st.button('Simular'):
-    df = simulate_mm1_queue(arr_interval, serv_interval, simulation_time, initial_queue_size)
-    st.dataframe(df)
+    st.dataframe(queue_df)
