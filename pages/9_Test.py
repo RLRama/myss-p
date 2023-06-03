@@ -21,11 +21,11 @@ with st.sidebar:
     st.subheader("Parámetros")
     arr_interval = st.slider(
         "Intervalo entre llegadas de clientes (seg)",
-        1, 100, (25.0, 75.0)
+        1, 100, (25, 75)
     )
     serv_interval = st.slider(
         "Intervalo de tiempo de servicio (seg)",
-        1, 100, (25.0, 75.0)
+        1, 100, (25, 75)
     )
     simulation_time = st.number_input(
         "Duración de la simulación (seg)",
