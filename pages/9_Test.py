@@ -102,10 +102,12 @@ for t in range(1, queue_duration + 1):  # Start from 1 to skip the initial row
 # Reset the index of the DataFrame
 queue_df.reset_index(drop=True, inplace=True)
 
+# Convert the DataFrame columns to integers, handling empty strings
 queue_df["Time"] = queue_df["Time"].astype(int)
-queue_df["Next Arrival"] = queue_df["Next Arrival"].astype(int)
-queue_df["Next Departure"] = queue_df["Next Departure"].astype(int)
+queue_df["Next Arrival"] = queue_df["Next Arrival"].apply(lambda x: int(x) if x else '')
+queue_df["Next Departure"] = queue_df["Next Departure"].apply(lambda x: int(x) if x else '')
 
+# Apply the formatting function to the time columns
 queue_df["Time"] = queue_df["Time"].apply(format_time)
 queue_df["Next Arrival"] = queue_df["Next Arrival"].apply(format_time)
 queue_df["Next Departure"] = queue_df["Next Departure"].apply(format_time)
