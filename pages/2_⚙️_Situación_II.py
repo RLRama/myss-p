@@ -34,10 +34,6 @@ st.markdown(
     """
 )
 
-import random
-import pandas as pd
-import streamlit as st
-
 # Mostrar parámetros en la barra lateral
 with st.sidebar:
     st.header("⌨️")
