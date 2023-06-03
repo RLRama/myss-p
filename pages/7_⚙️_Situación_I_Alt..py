@@ -57,7 +57,7 @@ class MM1Queue:
         self.service_rate = service_rate
         self.num_customers = num_customers
         self.queue = []
-        self.iteration_data = []
+        self.data = {'Arrival Time': [], 'Service Time': [], 'Waiting Time': []}
 
     def run_simulation(self):
         arrival_time = 0
@@ -67,27 +67,31 @@ class MM1Queue:
 
             if len(self.queue) > 0:
                 waiting_time = max(0, self.queue[-1] - arrival_time)
-                self.iteration_data.append((i+1, arrival_time, waiting_time))
+            else:
+                waiting_time = 0
 
-            self.queue.append(arrival_time)
             service_time = random.expovariate(self.service_rate)
             departure_time = arrival_time + service_time
-            self.queue = [x for x in self.queue if x > departure_time]
 
-        df = pd.DataFrame(self.iteration_data, columns=["Customer", "Arrival Time", "Waiting Time"])
+            self.queue.append(departure_time)
+            self.queue = [x for x in self.queue if x > arrival_time]
+
+            self.data['Arrival Time'].append(arrival_time)
+            self.data['Service Time'].append(service_time)
+            self.data['Waiting Time'].append(waiting_time)
+
+        df = pd.DataFrame(self.data)
         return df
 
 # Parameters for the simulation
 arrival_rate = 0.2
 service_rate = 0.3
-num_customers = 1000
+num_customers = 10
 
 # Create MM1Queue instance and run the simulation
+mm1_queue = MM1Queue(arrival_rate, service_rate, num_customers)
+df = mm1_queue.run_simulation()
 
-# Print the dataframe
+# Print the data as DataFrame
 if st.button('Simular'):
-    mm1_queue = MM1Queue(arrival_rate, service_rate, num_customers)
-    df = mm1_queue.run_simulation()
     st.dataframe(df)
-else:
-    st.write('')
