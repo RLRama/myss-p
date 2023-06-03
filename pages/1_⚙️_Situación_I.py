@@ -21,25 +21,6 @@ arrival_rate = 0.2
 service_rate = 0.3
 simulation_time = 100
 
-with st.sidebar:
-    st.header("⌨️")
-    st.subheader("Configurar parámetros")
-    arrival_rate = st.slider(
-        "Intervalo entre llegadas de clientes `(min)`",
-        0.0, 100.0, (25.0, 75.0)
-    )
-    service_rate = st.slider(
-        "Intervalo de tiempo de servicio `(min)`",
-        0.0, 100.0, (25.0, 75.0)
-    )
-    simulation_time = st.number_input(
-        "Duración de la simulación `(min)`",
-        min_value=1.00
-    )
-    distribution = st.radio(
-    "Distribución a usar para generar los números aleatorios",
-    ('uniform', 'gaussian'))
-
 st.markdown(
     """
     # Situación I
