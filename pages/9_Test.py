@@ -51,47 +51,44 @@ st.markdown(
     """
 )
 
-def mm1_simulation(arrival_rate, service_rate, simulation_time):
-    clock = 0
-    queue = 0
-    total_customers_served = 0
-    total_waiting_time = 0
+import numpy as np
+import pandas as pd
 
-    st.text("Iteration\tClock\tQueue\tTotal Served\tWaiting Time")
-    iteration = 1
+def mm1_simulation(arrival_rate, service_rate, num_iterations):
+    interarrival_times = np.random.exponential(scale=1 / arrival_rate, size=num_iterations)
+    service_times = np.random.exponential(scale=1 / service_rate, size=num_iterations)
 
-    while clock < simulation_time:
-        inter_arrival_time = 1 / arrival_rate
-        clock += inter_arrival_time
+    arrival_times = np.cumsum(interarrival_times)
+    service_starts = np.zeros(num_iterations)
+    wait_times = np.zeros(num_iterations)
+    departure_times = np.zeros(num_iterations)
 
-        if clock >= simulation_time:
-            break
+    for i in range(1, num_iterations):
+        service_starts[i] = max(arrival_times[i], departure_times[i-1])
+        wait_times[i] = service_starts[i] - arrival_times[i]
+        departure_times[i] = service_starts[i] + service_times[i]
 
-        total_customers_served += 1
+    data = {
+        'Iteration': range(num_iterations),
+        'Interarrival Time': interarrival_times,
+        'Arrival Time': arrival_times,
+        'Service Time': service_times,
+        'Service Start': service_starts,
+        'Wait Time': wait_times,
+        'Departure Time': departure_times
+    }
 
-        if queue == 0:
-            service_time = 1 / service_rate
-            total_waiting_time += service_time
-            departure_time = clock + service_time
-        else:
-            queue -= 1
-            service_time = 1 / service_rate
-            total_waiting_time += service_time
-            departure_time = clock + service_time
+    df = pd.DataFrame(data)
+    return df
 
-        queue += 1
-
-        st.text(f"{iteration}\t\t{clock:.2f}\t{queue}\t{total_customers_served}\t\t{total_waiting_time:.2f}")
-        iteration += 1
-
-    average_waiting_time = total_waiting_time / total_customers_served
-    return average_waiting_time
 
 # Example usage
-arrival_rate = 5  # average arrival rate of 5 customers per unit of time
-service_rate = 7  # average service rate of 7 customers per unit of time
-simulation_time = 100
+arrival_rate = 0.5
+service_rate = 0.6
+num_iterations = 10
+
+
 
 if st.button('Simular'):
-    average_waiting_time = mm1_simulation(arrival_rate, service_rate, simulation_time)
-    st.text("\nAverage waiting time:", average_waiting_time)
+    simulation_df = mm1_simulation(arrival_rate, service_rate, num_iterations)
+    st.dataframe(simulation_df)
