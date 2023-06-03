@@ -95,4 +95,4 @@ for t in range(1, queue_duration + 1):  # Start from 1 to skip the initial row
 queue_df.reset_index(drop=True, inplace=True)
 
 if st.button('Simular'):
-    st.dataframe(formatted_df)
+    st.dataframe(queue_df)
