@@ -57,6 +57,20 @@ def generate_random_number(interval):
     upper_bound = interval[1]
     return random.randint(lower_bound, upper_bound)
 
+def format_int_as_hh_mm_ss(int_time):
+  """Formats an integer as hh:mm:ss.
+  Args:
+    int_time: The integer to format.
+  Returns:
+    A string representing the formatted time.
+  """
+  # Convert the integer to a datetime object.
+  datetime_obj = datetime.datetime.fromtimestamp(int_time)
+  # Format the datetime object as hh:mm:ss.
+  formatted_time = datetime_obj.strftime("%H:%M:%S")
+  # Return the formatted time.
+  return formatted_time
+
 # Create an empty DataFrame to store the queue events
 queue_df = pd.DataFrame(columns=["Time", "Event", "Queue Size", "Next Arrival", "Next Departure"])
 
@@ -94,5 +108,11 @@ for t in range(1, queue_duration + 1):  # Start from 1 to skip the initial row
 # Reset the index of the DataFrame
 queue_df.reset_index(drop=True, inplace=True)
 
+formatted_df = queue_df.copy()
+formatted_df['Next Arrival'] = formatted_df['Next Arrival'].apply(format_int_as_hh_mm_ss)
+formatted_df['Next Departure'] = formatted_df['Next Departure'].apply(format_int_as_hh_mm_ss)
+formatted_df['Time'] = formatted_df['Time'].apply(format_int_as_hh_mm_ss)
+
+
 if st.button('Simular'):
-    st.dataframe(queue_df)
+    st.dataframe(formatted_df)
