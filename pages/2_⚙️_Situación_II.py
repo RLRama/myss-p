@@ -50,16 +50,10 @@ with st.sidebar:
         1, 100, (25, 75)
     )
 
-    # Slider para el intervalo entre descansos
+    # Slider para el tiempo de descanso del servidor
     break_interval = st.slider(
-        "Intervalo entre descansos",
-        1, 10, 1
-    )
-
-    # Slider para la duración del descanso
-    break_duration = st.slider(
-        "Duración del descanso",
-        1, 10, 1
+        "Intervalo de tiempo de descanso del servidor (seg)",
+        1, 100, (10, 30)
     )
 
     # Entrada para la duración de simulación
@@ -74,14 +68,16 @@ with st.sidebar:
         min_value=0
     )
 
+
 def generate_random_number(interval):
-    """Generates a random number within the given interval."""
+    """Genera un número al azar dentro del intervalo dado"""
     lower_bound = interval[0]
     upper_bound = interval[1]
     return random.randint(lower_bound, upper_bound)
 
+
 def format_time(seconds):
-    """Converts seconds to HH:MM:SS format."""
+    """Pasa de segundos a formato HH:MM:SS"""
     if not seconds:
         return ''
     hours = seconds // 3600
@@ -89,58 +85,80 @@ def format_time(seconds):
     seconds = seconds % 60
     return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
 
-# Create an empty dataframe for queue events
-queue_df = pd.DataFrame(columns=["Hora actual", "Evento", "Clientes en cola", "Hora sig. llegada", "Hora sig. fin de servicio"])
 
-# Define function to handle arrivals
-def handle_arrival(time, queue, arrival_interval):
-    """Adds a customer to the queue when the event is an arrival."""
+# Crea un dataframe vacío para los eventos de la cola
+queue_df = pd.DataFrame(
+    columns=["Hora actual", "Evento", "Clientes en cola", "Hora sig. llegada", "Hora sig. fin de servicio"]
+)
+
+# Definir función para manejar llegadas
+def handle_arrival(time, queue, arrival_interval, departure_interval):
+    """Añade un cliente a la cola cuando el evento es de llegada."""
     queue.append(time)
     queue_df.loc[len(queue_df)] = [time, "Llegada", len(queue), "", ""]
 
-# Define function to handle departures
-def handle_departure(time, queue, departure_interval):
-    """Removes a customer from the queue when the event is a departure."""
+    # Si no hay un servicio en curso, programar el próximo evento de salida
+    if len(queue) == 1:
+        next_departure = time + generate_random_number(departure_interval)
+        queue_df.loc[len(queue_df) - 1, "Hora sig. fin de servicio"] = next_departure
+
+
+# Definir función para manejar salidas
+def handle_departure(time, queue, departure_interval, break_interval):
+    """Quita un cliente de la cola cuando el evento es de salida."""
     if len(queue) > 0:
         queue.pop(0)
     queue_df.loc[len(queue_df)] = [time, "Fin de servicio", len(queue), "", ""]
 
-# Simulate queue events
+    # Si hay más clientes en la cola, programar el próximo evento de salida
+    if len(queue) > 0:
+        next_departure = time + generate_random_number(departure_interval)
+        queue_df.loc[len(queue_df) - 1, "Hora sig. fin de servicio"] = next_departure
+    else:
+        # Si la cola está vacía, el servidor puede tomar un descanso
+        break_time = time + generate_random_number(break_interval)
+        queue_df.loc[len(queue_df) - 1, "Hora sig. fin de servicio"] = break_time
+
+
+# Simula los eventos de cola
 queue = []
 
-# Initialize the queue with the initial size
+# Inicializa la cola con el tamaño inicial
 queue.extend([0] * initial_queue_size)
 queue_df.loc[len(queue_df)] = [0, "", len(queue), "", ""]
 
 next_arrival = generate_random_number(arr_interval)
-next_departure = generate_random_number(serv_interval)
+next_departure = float("inf")  # Inicialmente no hay servicio en curso
 
-# Main simulation loop
-for t in range(1, queue_duration + 1):  # Skip the first row
+# Bucle principal de la simulación
+for t in range(1, queue_duration + 1):
     if t == next_arrival:
-        handle_arrival(t, queue, next_arrival)
+        handle_arrival(t, queue, arr_interval, serv_interval)
         next_arrival += generate_random_number(arr_interval)
+
     if t == next_departure:
-        handle_departure(t, queue, next_departure)
-        next_departure += generate_random_number(serv_interval)
+        handle_departure(t, queue, serv_interval, break_interval)
 
-    # Update the next arrival and departure times in the dataframe
+        # El servidor retoma el servicio después del descanso
+        if t >= next_departure:
+            next_departure = float("inf")
+
+    # Actualiza los tiempos de llegada en el dataframe
     queue_df.loc[len(queue_df) - 1, "Hora sig. llegada"] = next_arrival if t < next_arrival else ""
-    queue_df.loc[len(queue_df) - 1, "Hora sig. fin de servicio"] = next_departure if t < next_departure else ""
 
-# Reset the dataframe index
+# Reinicia el índice del dataframe
 queue_df.reset_index(drop=True, inplace=True)
 
-# Convert the dataframe columns to ints and handle empty strings
+# Convierte las columnas del dataframe a ints, y se encarga de los strings vacíos
 queue_df["Hora actual"] = queue_df["Hora actual"].astype(int)
-queue_df["Hora sig. llegada"] = queue_df["Hora sig. llegada"].apply(lambda x: int(x) if x else '')
-queue_df["Hora sig. fin de servicio"] = queue_df["Hora sig. fin de servicio"].apply(lambda x: int(x) if x else '')
+queue_df["Hora sig. llegada"] = queue_df["Hora sig. llegada"].apply(lambda x: int(x) if x else "")
+queue_df["Hora sig. fin de servicio"] = queue_df["Hora sig. fin de servicio"].apply(lambda x: int(x) if x else "")
 
-# Apply the time formatting function to the time columns
+# Aplica la función de formateo de tiempo a las columnas de tiempo
 queue_df["Hora actual"] = queue_df["Hora actual"].apply(format_time)
 queue_df["Hora sig. llegada"] = queue_df["Hora sig. llegada"].apply(format_time)
 queue_df["Hora sig. fin de servicio"] = queue_df["Hora sig. fin de servicio"].apply(format_time)
 
-# Display the dataframe when the "Simular" button is clicked
+# Muestra el dataframe cuando se hace clic al botón
 if st.button('Simular'):
     st.dataframe(queue_df)
