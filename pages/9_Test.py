@@ -55,18 +55,10 @@ with st.sidebar:
     "Distribución para generación de números aleatorios",
     ('uniforme', 'gaussiana'))
 
-def generate_random_number(interval, distribution):
+def generate_random_number(interval):
     lower_bound = interval[0]
     upper_bound = interval[1]
-
-    if distribution == 'uniforme':
-        return random.uniform(lower_bound, upper_bound)
-    elif distribution == 'gaussiana':
-        mean = (lower_bound + upper_bound) / 2
-        std_dev = (upper_bound - lower_bound) / 6  # Adjust the standard deviation based on the interval
-        return np.random.normal(mean, std_dev)
-    else:
-        raise ValueError("Invalid distribution specified.")
+    return random.randint(lower_bound, upper_bound)
 
 # Create an empty DataFrame to store the queue events
 queue_df = pd.DataFrame(columns=["Time", "Event", "Queue Size"])
@@ -84,12 +76,17 @@ def handle_departure(time, queue):
 
 # Simulate the queue events
 queue = []
+queue_duration = 50  # Number of time units to simulate the queue
+arrival_interval = random.randint(1, 4)  # Random interval for arrivals
+departure_interval = random.randint(2, 5)  # Random interval for departures
 
-for t in range(simulation_time):
-    if t % generate_random_number(arr_interval, distribution) == 0:  # Check if it's an arrival time
+for t in range(queue_duration):
+    if t % arrival_interval == 0:  # Check if it's an arrival time
         handle_arrival(t, queue)
-    if t % generate_random_number(serv_interval, distribution) == 0:  # Check if it's a departure time
+        arrival_interval = generate_random_number(arr_interval)  # Generate a new random arrival interval
+    if t % departure_interval == 0:  # Check if it's a departure time
         handle_departure(t, queue)
+        departure_interval = generate_random_number(serv_interval)  # Generate a new random departure interval
 
 if st.button('Simular'):
     st.dataframe(queue_df)
