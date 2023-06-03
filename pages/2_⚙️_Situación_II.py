@@ -54,8 +54,6 @@ def add_breaks(queue_df, break_interval, service_interval, break_duration):
                 queue_df.loc[k, "Hora sig. fin de servicio"] = ""
     return queue_df
 
-# Mostrar parámetros en la barra lateral
-
 with st.sidebar:
     st.header("⌨️")
     st.subheader("Parámetros")
@@ -138,7 +136,7 @@ next_arrival = generate_random_number(arr_interval)
 next_departure = generate_random_number(serv_interval)
 
 # Main simulation loop
-for t in range(1, queue_duration + 1):
+for t in range(1, queue_duration + 1):  # Skip the first row
     if t == next_arrival:
         handle_arrival(t, queue, next_arrival)
         next_arrival += generate_random_number(arr_interval)
@@ -158,8 +156,8 @@ queue_df.reset_index(drop=True, inplace=True)
 
 # Convert the dataframe columns to ints and handle empty strings
 queue_df["Hora actual"] = queue_df["Hora actual"].astype(int)
-queue_df["Hora sig. llegada"] = queue_df["Hora sig. llegada"].apply(lambda x: int(x) if x else "")
-queue_df["Hora sig. fin de servicio"] = queue_df["Hora sig. fin de servicio"].apply(lambda x: int(x) if x else "")
+queue_df["Hora sig. llegada"] = queue_df["Hora sig. llegada"].apply(lambda x: int(x) if x else '')
+queue_df["Hora sig. fin de servicio"] = queue_df["Hora sig. fin de servicio"].apply(lambda x: int(x) if x else '')
 
 # Apply the time formatting function to the time columns
 queue_df["Hora actual"] = queue_df["Hora actual"].apply(format_time)
