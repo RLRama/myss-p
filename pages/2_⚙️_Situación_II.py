@@ -34,25 +34,29 @@ st.markdown(
     """
 )
 
-def add_breaks(queue_df, break_interval, serv_interval, break_duration):
+def add_breaks(queue_df, break_interval, service_interval, break_duration):
     """Adds breaks to the queue dataframe based on the break interval and break duration."""
-    for i in range(len(queue_df)):
-        if i % break_interval == 0 and i > 0:
-            queue_df.loc[i, "Evento"] = "Break"
+    break_start = break_interval  # Start the first break after the break interval
+    while break_start < len(queue_df):
+        break_end = min(break_start + break_duration, len(queue_df))
+        for i in range(break_start, break_end):
+            queue_df.loc[i, "Evento"] = "Descanso"
             queue_df.loc[i, "Clientes en cola"] = len(queue_df) - i
             queue_df.loc[i, "Hora sig. llegada"] = ""
             queue_df.loc[i, "Hora sig. fin de servicio"] = ""
-            for j in range(i, min(i + generate_random_number(serv_interval), len(queue_df))):
-                queue_df.loc[j, "Evento"] = "Servicio antes de descanso"
-                queue_df.loc[j, "Clientes en cola"] = len(queue_df) - j
-                queue_df.loc[j, "Hora sig. llegada"] = ""
-                queue_df.loc[j, "Hora sig. fin de servicio"] = ""
-            for k in range(min(i + generate_random_number(serv_interval), len(queue_df)), min(i + generate_random_number(serv_interval), + break_duration, len(queue_df))):
-                queue_df.loc[k, "Evento"] = "Descanso"
-                queue_df.loc[k, "Clientes en cola"] = len(queue_df) - k
-                queue_df.loc[k, "Hora sig. llegada"] = ""
-                queue_df.loc[k, "Hora sig. fin de servicio"] = ""
+
+        service_start = break_end
+        service_end = min(service_start + generate_random_number(service_interval), len(queue_df))
+        for i in range(service_start, service_end):
+            queue_df.loc[i, "Evento"] = "Servicio antes de descanso"
+            queue_df.loc[i, "Clientes en cola"] = len(queue_df) - i
+            queue_df.loc[i, "Hora sig. llegada"] = ""
+            queue_df.loc[i, "Hora sig. fin de servicio"] = ""
+
+        break_start = service_end + generate_random_number(service_interval)
+
     return queue_df
+
 
 with st.sidebar:
     st.header("⌨️")
