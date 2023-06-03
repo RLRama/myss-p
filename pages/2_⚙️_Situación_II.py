@@ -95,7 +95,6 @@ def handle_arrival(time, queue, arrival_interval, service_interval):
     queue.append(time)
     queue_df.loc[len(queue_df)] = [time, "Llegada", len(queue), "", "", False]
 
-
 def handle_departure(time, queue, departure_interval, break_interval):
     """Quita un cliente de la cola cuando el evento es de salida."""
     if len(queue) > 0:
@@ -134,15 +133,17 @@ for t in range(1, queue_duration + 1):
             next_departure = t + generate_random_number(serv_interval)
             queue_df.loc[len(queue_df) - 1, "Hora sig. fin de servicio"] = next_departure
 
-    if t == next_departure:
+    if t == next_departure and not on_break:
         handle_departure(t, queue, serv_interval, break_interval)
 
         if t >= next_departure:
             next_departure = float("inf")
-            on_break = False
+            on_break = True
+            queue_df.loc[len(queue_df) - 1, "Descanso"] = True
+        else:
+            queue_df.loc[len(queue_df) - 1, "Descanso"] = False
 
     queue_df.loc[len(queue_df) - 1, "Hora sig. llegada"] = next_arrival if t < next_arrival else ""
-    queue_df.loc[len(queue_df) - 1, "Descanso"] = on_break
 
 # Reinicia el índice del dataframe
 queue_df.reset_index(drop=True, inplace=True)
