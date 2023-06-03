@@ -18,29 +18,15 @@ st.set_page_config(
 
 st.markdown(
     """
-    # Situación I
-    ## Descripción
-    - Obedece al problema n° 1
-    - Clientes que llegan individualmente en intervalos aleatorios
-    - Cola FIFO (los clientes son atendidos en el orden que llegan)
-    - Tiempos de prestación de servicios de intervalo aleatorios
-    - El servidor no abandona el puesto de servicio
-
-    ## Uso
-    - Configure parámetros usando la **👈 barra lateral** para dar valores
-    - Presione el botón **'Simular'** para mostrar la tabla de simulación generada
-    """
-)
-
-st.markdown(
-    """
-    ## Situación I
+    ## Situación II
     ### Descripción
-    - Problema I
+    - Problema II
+    - Similar al problema anterior
     - Tiempo de llegadas de cliente aleatorio (dentro de un intervalo dado)
     - Cola FIFO (los clientes son atendidos en el orden que llegan)
     - Tiempo de prestación de servicio aleatorio (dentro de un intervalo dado)
-    - El servidor no abandona el puesto de servicio
+    - El servidor abandona el puesto de servicio durante ciertos periodos
+    - Lo hace incluso con un servicio en curso, el cual termina al regresar
 
     ### Uso
     1. Configure parámetros usando la **👈 barra lateral**
@@ -71,13 +57,13 @@ with st.sidebar:
 
     # Slider para la duración y frecuencia de las pausas del servidor
     break_duration = st.slider(
-        "Duración de las pausas del servidor (sec)",
-        1, 60, 10
+        "Intervalo de tiempo de descanso del servidor (sec)",
+        1, 100, (25, 75)
     )
     
     break_frequency = st.slider(
-        "Frecuencia de las pausas del servidor (seg)",
-        1, 60, 30
+        "Intervalo de tiempo de servicio antes del descanso del servidor (sec)",
+        1, 100, (25, 75)
     )
     
     # Entrada para la duración de simulación
