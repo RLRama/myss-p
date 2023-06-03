@@ -75,8 +75,7 @@ def single_server_queue_simulation(num_iterations, arrival_time, service_time):
         waiting_time = service_start - arrival
 
         # Append the iteration to the dataframe
-        df = df.append({'Iteration': i + 1, 'Arrival Time': arrival, 'Service Start Time': service_start,
-                        'Service End Time': service_end, 'Waiting Time': waiting_time}, ignore_index=True)
+        df = df.append({'Iteration': i + 1, 'Arrival Time': arrival, 'Service Start Time': service_start, 'Service End Time': service_end, 'Waiting Time': waiting_time}, ignore_index=True)
 
     return df
 
