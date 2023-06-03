@@ -87,19 +87,16 @@ def format_time(seconds):
 
 
 # Crea un dataframe vacío para los eventos de la cola
-queue_df = pd.DataFrame(
-    columns=["Hora actual", "Evento", "Clientes en cola", "Hora sig. llegada", "Hora sig. fin de servicio", "Descanso"]
-)
+queue_df = pd.DataFrame(columns=["Hora actual", "Evento", "Clientes en cola", "Hora sig. llegada", "Hora sig. fin de servicio", "Descanso"])
 
 # Definir función para manejar llegadas
-def handle_arrival(time, queue, arrival_interval, departure_interval):
+def handle_arrival(time, queue, arrival_interval, service_interval):
     """Añade un cliente a la cola cuando el evento es de llegada."""
     queue.append(time)
-    queue_df.loc[len(queue_df)] = [time, "Llegada", len(queue), "", ""]
+    queue_df.loc[len(queue_df)] = [time, "Llegada", len(queue), "", "", ""]
 
-    # Si no hay un servicio en curso, programar el próximo evento de salida
     if len(queue) == 1:
-        next_departure = time + generate_random_number(departure_interval)
+        next_departure = time + generate_random_number(service_interval)
         queue_df.loc[len(queue_df) - 1, "Hora sig. fin de servicio"] = next_departure
 
 
