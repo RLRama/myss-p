@@ -41,7 +41,7 @@ def add_breaks(queue_df, break_interval, service_interval, break_duration):
         break_end = min(break_start + break_duration, len(queue_df))
         for i in range(break_start, break_end):
             queue_df.loc[i, "Evento"] = "Descanso"
-            queue_df.loc[i, "Clientes en cola"] = len(queue_df) - i
+            queue_df.loc[i, "Clientes en cola"] = len(queue_df) - (i + 1)
             queue_df.loc[i, "Hora sig. llegada"] = ""
             queue_df.loc[i, "Hora sig. fin de servicio"] = ""
 
@@ -49,13 +49,13 @@ def add_breaks(queue_df, break_interval, service_interval, break_duration):
         service_end = min(service_start + generate_random_number(service_interval), len(queue_df))
         for i in range(service_start, service_end):
             queue_df.loc[i, "Evento"] = "Servicio antes de descanso"
-            queue_df.loc[i, "Clientes en cola"] = len(queue_df) - i
+            queue_df.loc[i, "Clientes en cola"] = len(queue_df) - (i + 1)
             queue_df.loc[i, "Hora sig. llegada"] = ""
             queue_df.loc[i, "Hora sig. fin de servicio"] = ""
 
         break_start = service_end + generate_random_number(service_interval)
-
     return queue_df
+
 
 
 with st.sidebar:
