@@ -51,17 +51,11 @@ with st.sidebar:
         "Clientes en cola al inicio",
         min_value=0
     )
-    distribution = st.radio(
-    "Distribución para generación de números aleatorios",
-    ('uniforme', 'gaussiana'))
 
 def generate_random_number(interval):
     lower_bound = interval[0]
     upper_bound = interval[1]
     return random.randint(lower_bound, upper_bound)
-
-import pandas as pd
-import random
 
 # Create an empty DataFrame to store the queue events
 queue_df = pd.DataFrame(columns=["Time", "Event", "Queue Size", "Next Arrival", "Next Departure"])
@@ -82,10 +76,10 @@ queue = []
 
 # Initialize the queue with the initial size
 queue.extend([0] * initial_queue_size)
+queue_df.loc[len(queue_df)] = [0, "", len(queue), "", ""]
 
 next_arrival = generate_random_number(arr_interval)
 next_departure = generate_random_number(serv_interval)
-
 for t in range(1, queue_duration + 1):  # Start from 1 to skip the initial row
     if t == next_arrival:
         handle_arrival(t, queue, next_arrival)
@@ -99,7 +93,3 @@ for t in range(1, queue_duration + 1):  # Start from 1 to skip the initial row
 
 # Reset the index of the DataFrame
 queue_df.reset_index(drop=True, inplace=True)
-
-# Print the queue DataFrame
-if st.button('Simular'):
-    st.dataframe(queue_df)
