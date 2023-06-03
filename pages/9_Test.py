@@ -46,7 +46,7 @@ st.markdown(
     - El servidor no abandona el puesto de servicio
 
     ## Uso
-    - Configure parámetros usando la **👈 barra lateral**
-    - Presione el botón **'Simular'** para generar la tabla de simulación
+    1. Configure parámetros usando la **👈 barra lateral**
+    2. Haga clic el botón **'Simular'** para generar la tabla de simulación
     """
 )
