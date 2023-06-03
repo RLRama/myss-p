@@ -129,6 +129,7 @@ queue_df.loc[len(queue_df)] = [0, "", len(queue), "", ""]
 
 next_arrival = generate_random_number(arr_interval)
 next_departure = float("inf")  # Inicialmente no hay servicio en curso
+on_break = False  # Inicialmente el servidor no está en descanso
 
 # Bucle principal de la simulación
 for t in range(1, queue_duration + 1):
@@ -136,12 +137,13 @@ for t in range(1, queue_duration + 1):
         handle_arrival(t, queue, arr_interval, serv_interval)
         next_arrival += generate_random_number(arr_interval)
 
-    if t == next_departure:
+    if t == next_departure and not on_break:
         handle_departure(t, queue, serv_interval, break_interval)
 
         # El servidor retoma el servicio después del descanso
         if t >= next_departure:
             next_departure = float("inf")
+            on_break = False
 
     # Actualiza los tiempos de llegada en el dataframe
     queue_df.loc[len(queue_df) - 1, "Hora sig. llegada"] = next_arrival if t < next_arrival else ""
