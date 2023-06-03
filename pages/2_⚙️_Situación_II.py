@@ -34,29 +34,6 @@ st.markdown(
     """
 )
 
-def add_breaks(queue_df, break_interval, service_interval, break_duration):
-    """Adds breaks to the queue dataframe based on the break interval and break duration."""
-    break_start = break_interval  # Start the first break after the break interval
-    while break_start < len(queue_df):
-        break_end = min(break_start + break_duration, len(queue_df))
-        for i in range(break_start, break_end):
-            queue_df.loc[i, "Evento"] = "Descanso"
-            queue_df.loc[i, "Clientes en cola"] = len(queue_df) - (i + 1)
-            queue_df.loc[i, "Hora sig. llegada"] = ""
-            queue_df.loc[i, "Hora sig. fin de servicio"] = ""
-
-        service_start = break_end
-        service_end = min(service_start + service_interval[1], len(queue_df))
-        for i in range(service_start, service_end):
-            queue_df.loc[i, "Evento"] = "Servicio antes de descanso"
-            queue_df.loc[i, "Clientes en cola"] = len(queue_df) - (i + 1)
-            queue_df.loc[i, "Hora sig. llegada"] = ""
-            queue_df.loc[i, "Hora sig. fin de servicio"] = ""
-
-        break_start = service_end + service_interval[0]
-
-    return queue_df
-
 with st.sidebar:
     st.header("⌨️")
     st.subheader("Parámetros")
@@ -150,9 +127,6 @@ for t in range(1, queue_duration + 1):  # Skip the first row
     # Update the next arrival and departure times in the dataframe
     queue_df.loc[len(queue_df) - 1, "Hora sig. llegada"] = next_arrival if t < next_arrival else ""
     queue_df.loc[len(queue_df) - 1, "Hora sig. fin de servicio"] = next_departure if t < next_departure else ""
-
-# Add breaks to the queue dataframe
-queue_df = add_breaks(queue_df, break_interval, serv_interval, break_duration)
 
 # Reset the dataframe index
 queue_df.reset_index(drop=True, inplace=True)
