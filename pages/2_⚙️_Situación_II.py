@@ -137,6 +137,11 @@ for t in range(1, queue_duration + 1):
         handle_arrival(t, queue, arr_interval, serv_interval)
         next_arrival += generate_random_number(arr_interval)
 
+        # Si no hay un servicio en curso, programar el próximo evento de salida
+        if next_departure == float("inf"):
+            next_departure = t + generate_random_number(serv_interval)
+            queue_df.loc[len(queue_df) - 1, "Hora sig. fin de servicio"] = next_departure
+
     if t == next_departure and not on_break:
         handle_departure(t, queue, serv_interval, break_interval)
 
