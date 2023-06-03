@@ -56,101 +56,118 @@ st.markdown(
     """
 )
 
-def generate_random_numbers(interval, distribution):
+st.markdown(
+    """
+    ## Situación I
+    ### Descripción
+    - Problema I
+    - Tiempo de llegadas de cliente aleatorio (dentro de un intervalo dado)
+    - Cola FIFO (los clientes son atendidos en el orden que llegan)
+    - Tiempo de prestación de servicio aleatorio (dentro de un intervalo dado)
+    - El servidor no abandona el puesto de servicio
+
+    ### Uso
+    1. Configure parámetros usando la **👈 barra lateral**
+    2. Haga clic el botón **'Simular'** para generar la tabla de simulación
+    """
+)
+
+# Display parameters in the Streamlit sidebar
+with st.sidebar:
+    st.header("⌨️")
+    st.subheader("Parameters")
+    
+    # Slider for interval between customer arrivals
+    arr_interval = st.slider(
+        "Interval between customer arrivals (sec)",
+        1, 100, (25, 75)
+    )
+    
+    # Slider for service time interval
+    serv_interval = st.slider(
+        "Service time interval (sec)",
+        1, 100, (25, 75)
+    )
+    
+    # Input field for simulation duration
+    queue_duration = st.number_input(
+        "Simulation duration (sec)",
+        min_value=1
+    )
+    
+    # Input field for initial number of customers in the queue
+    initial_queue_size = st.number_input(
+        "Initial number of customers in queue",
+        min_value=0
+    )
+
+def generate_random_number(interval):
+    """Generate a random number within the given interval."""
     lower_bound = interval[0]
     upper_bound = interval[1]
+    return random.randint(lower_bound, upper_bound)
 
-    if distribution == 'uniform':
-        return random.uniform(lower_bound, upper_bound)
-    elif distribution == 'gaussian':
-        mu = (lower_bound + upper_bound) / 2
-        sigma = (upper_bound - lower_bound) / 6
-        return np.random.normal(mu, sigma)
-    else:
-        raise ValueError("Distribución inválida")
-    
-def format_float_as_time(float_minutes):
-    time = pd.to_timedelta(float_minutes, unit='m')
-    formatted_time = str(time)
+def format_time(seconds):
+    """Format time from seconds to HH:MM:SS format."""
+    if not seconds:
+        return ''
+    hours = seconds // 3600
+    minutes = (seconds % 3600) // 60
+    seconds = seconds % 60
+    return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
 
-    if '.' in formatted_time:
-        formatted_time = formatted_time[:-3]
+# Create an empty DataFrame to store the queue events
+queue_df = pd.DataFrame(columns=["Current Time", "Event", "Customers in Queue", "Next Arrival Time", "Next Service Completion Time"])
 
-    return formatted_time
+# Define a function to handle arrivals
+def handle_arrival(time, queue, arrival_interval):
+    """Handle an arrival event by adding a customer to the queue."""
+    queue.append(time)
+    queue_df.loc[len(queue_df)] = [time, "Arrival", len(queue), "", ""]
 
-class Event:
-    def __init__(self, time, arrival):
-        self.time = time
-        self.arrival = arrival
+# Define a function to handle departures
+def handle_departure(time, queue, departure_interval):
+    """Handle a departure event by removing a customer from the queue."""
+    if len(queue) > 0:
+        queue.pop(0)
+    queue_df.loc[len(queue_df)] = [time, "Service Completion", len(queue), "", ""]
 
-    def __lt__(self, other):
-        return self.time < other.time
+# Simulate the queue events
+queue = []
 
-def mm1_queue_simulation(arrival_rate, service_rate, simulation_time):
-    event_queue = []
-    data = []
-    clock = 0
-    num_jobs = 0
-    num_completed_jobs = 0
-    total_response_time = 0
-    previous_event_time = 0
-    queue_size = 0
+# Initialize the queue with the initial size
+queue.extend([0] * initial_queue_size)
+queue_df.loc[len(queue_df)] = [0, "", len(queue), "", ""]
 
-    while clock < simulation_time:
-        event_queue.append(Event(clock + generate_random_numbers(arrival_rate, distribution), True))
-        event_queue.sort()
-        current_event = event_queue.pop(0)
-        clock = current_event.time
+next_arrival = generate_random_number(arr_interval)
+next_departure = generate_random_number(serv_interval)
 
-        next_arrival_time = event_queue[0].time if event_queue else None
+# Main simulation loop
+for t in range(1, queue_duration + 1):  # Start from 1 to skip the initial row
+    if t == next_arrival:
+        handle_arrival(t, queue, next_arrival)
+        next_arrival += generate_random_number(arr_interval)
+    if t == next_departure:
+        handle_departure(t, queue, next_departure)
+        next_departure += generate_random_number(serv_interval)
 
-        next_departure_time = None
-        if queue_size > 0:
-            next_departure_time = clock + generate_random_numbers(service_rate, distribution)
+    # Update the next arrival and departure times in the queue DataFrame
+    queue_df.loc[len(queue_df) - 1, "Next Arrival Time"] = next_arrival if t < next_arrival else ""
+    queue_df.loc[len(queue_df) - 1, "Next Service Completion Time"] = next_departure if t < next_departure else ""
 
+# Reset the index of the DataFrame
+queue_df.reset_index(drop=True, inplace=True)
 
-        data.append({
-            "Evento": "Llegada" if current_event.arrival else "Fin de servicio",
-            "Hora": format_float_as_time(clock),
-            "Siguiente llegada": format_float_as_time(next_arrival_time),
-            "Siguiente fin de servicio": format_float_as_time(next_departure_time),
-            "Clientes en cola": queue_size,
-            "Servidor": "Ocupado" if queue_size > 0 else "Libre"
-        })
+# Convert the DataFrame columns to integers, handling empty strings
+queue_df["Current Time"] = queue_df["Current Time"].astype(int)
+queue_df["Next Arrival Time"] = queue_df["Next Arrival Time"].apply(lambda x: int(x) if x else '')
+queue_df["Next Service Completion Time"] = queue_df["Next Service Completion Time"].apply(lambda x: int(x) if x else '')
 
-        if current_event.arrival:
-            num_jobs += 1
-            service_time = generate_random_numbers(service_rate, distribution)
-            total_response_time += clock - previous_event_time
-            previous_event_time = clock
+# Apply the formatting function to the time columns
+queue_df["Current Time"] = queue_df["Current Time"].apply(format_time)
+queue_df["Next Arrival Time"] = queue_df["Next Arrival Time"].apply(format_time)
+queue_df["Next Service Completion Time"] = queue_df["Next Service Completion Time"].apply(format_time)
 
-            if queue_size == 0:
-                event_queue.append(Event(clock + service_time, False))
-            
-            queue_size += 1
-        else:
-            num_completed_jobs += 1
-            queue_size -= 1
-
-            if queue_size > 0:
-                service_time = generate_random_numbers(service_rate, distribution)
-                event_queue.append(Event(clock + service_time, False))
-
-    average_response_time = total_response_time / num_completed_jobs
-    utilization = num_completed_jobs / clock
-
-    df = pd.DataFrame(data)
-
-    st.write("### Resultados de la simulación:")
-    st.write("- Tiempo de simulación:", format_float_as_time(simulation_time))
-    st.write("- Servicios completados:", num_completed_jobs)
-    st.write("- Tiempo de respuesta promedio (tiempo total de respuesta / trabajos completados):", format(average_response_time))
-    st.write("- Utilización (trabajos completados / reloj):", utilization)
-
-    return df
-
-st.checkbox("Usar ancho total de la página", value=False, key="use_container_width")
-
-if st.button ('Simular'):
-    df = mm1_queue_simulation(arrival_rate, service_rate, simulation_time)
-    st.dataframe(df, use_container_width=st.session_state.use_container_width)
+# Display the queue DataFrame when the "Simulate" button is clicked
+if st.button('Simulate'):
+    st.dataframe(queue_df)
