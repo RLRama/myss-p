@@ -16,11 +16,6 @@ st.set_page_config(
     }
 )
 
-# Example usage
-arrival_rate = 0.2
-service_rate = 0.3
-simulation_time = 100
-
 st.markdown(
     """
     # Situación I
@@ -53,43 +48,43 @@ st.markdown(
     """
 )
 
-# Display parameters in the Streamlit sidebar
+# Mostar parámetros en la barra lateral
 with st.sidebar:
     st.header("⌨️")
-    st.subheader("Parameters")
+    st.subheader("Parámetros")
     
-    # Slider for interval between customer arrivals
+    # Slider para el intervalo entre llegadas de clientes
     arr_interval = st.slider(
-        "Interval between customer arrivals (sec)",
+        "Intervalo de tiempo entre llegadas (sec)",
         1, 100, (25, 75)
     )
     
-    # Slider for service time interval
+    # Slider para el tiempo de trabajo
     serv_interval = st.slider(
-        "Service time interval (sec)",
+        "Intervalo de tiempo de servicio (sec)",
         1, 100, (25, 75)
     )
     
-    # Input field for simulation duration
+    # Entrada para la duración de simulación
     queue_duration = st.number_input(
-        "Simulation duration (sec)",
+        "Tiempo de simulación (seg)",
         min_value=1
     )
     
-    # Input field for initial number of customers in the queue
+    # Entrada para tamaño inicial de cola
     initial_queue_size = st.number_input(
-        "Initial number of customers in queue",
+        "Tamaño inicial de cola",
         min_value=0
     )
 
 def generate_random_number(interval):
-    """Generate a random number within the given interval."""
+    """Genera un número al azar dentro del intervalo dado"""
     lower_bound = interval[0]
     upper_bound = interval[1]
     return random.randint(lower_bound, upper_bound)
 
 def format_time(seconds):
-    """Format time from seconds to HH:MM:SS format."""
+    """Pasa de segundos a formato HH:MM:SS"""
     if not seconds:
         return ''
     hours = seconds // 3600
@@ -97,34 +92,34 @@ def format_time(seconds):
     seconds = seconds % 60
     return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
 
-# Create an empty DataFrame to store the queue events
-queue_df = pd.DataFrame(columns=["Current Time", "Event", "Customers in Queue", "Next Arrival Time", "Next Service Completion Time"])
+# Crea un dataframe vacío para los eventos de la cola
+queue_df = pd.DataFrame(columns=["Hora actual", "Event", "Customers in Queue", "Hora sig. llegada", "Hora sig. fin de servicio"])
 
-# Define a function to handle arrivals
+# Definir función para manejar llegadas
 def handle_arrival(time, queue, arrival_interval):
-    """Handle an arrival event by adding a customer to the queue."""
+    """Añade un cliente a la cola cuando el evento es de llegada."""
     queue.append(time)
     queue_df.loc[len(queue_df)] = [time, "Arrival", len(queue), "", ""]
 
-# Define a function to handle departures
+# Definir función para manejar salidas
 def handle_departure(time, queue, departure_interval):
-    """Handle a departure event by removing a customer from the queue."""
+    """Quita un cliente de la cola cuando el evento es de salida."""
     if len(queue) > 0:
         queue.pop(0)
     queue_df.loc[len(queue_df)] = [time, "Service Completion", len(queue), "", ""]
 
-# Simulate the queue events
+# Simula los eventos de cola
 queue = []
 
-# Initialize the queue with the initial size
+# Inicializa la cola con el tamaño inicial
 queue.extend([0] * initial_queue_size)
 queue_df.loc[len(queue_df)] = [0, "", len(queue), "", ""]
 
 next_arrival = generate_random_number(arr_interval)
 next_departure = generate_random_number(serv_interval)
 
-# Main simulation loop
-for t in range(1, queue_duration + 1):  # Start from 1 to skip the initial row
+# Bucle principal de la simulación
+for t in range(1, queue_duration + 1):  # Salta la primera fila
     if t == next_arrival:
         handle_arrival(t, queue, next_arrival)
         next_arrival += generate_random_number(arr_interval)
@@ -132,23 +127,23 @@ for t in range(1, queue_duration + 1):  # Start from 1 to skip the initial row
         handle_departure(t, queue, next_departure)
         next_departure += generate_random_number(serv_interval)
 
-    # Update the next arrival and departure times in the queue DataFrame
-    queue_df.loc[len(queue_df) - 1, "Next Arrival Time"] = next_arrival if t < next_arrival else ""
-    queue_df.loc[len(queue_df) - 1, "Next Service Completion Time"] = next_departure if t < next_departure else ""
+    # Actualiza los tiempos de salida y llegada en el dataframe
+    queue_df.loc[len(queue_df) - 1, "Hora sig. llegada"] = next_arrival if t < next_arrival else ""
+    queue_df.loc[len(queue_df) - 1, "Hora sig. fin de servicio"] = next_departure if t < next_departure else ""
 
-# Reset the index of the DataFrame
+# Reinicia el índice del datafram
 queue_df.reset_index(drop=True, inplace=True)
 
-# Convert the DataFrame columns to integers, handling empty strings
-queue_df["Current Time"] = queue_df["Current Time"].astype(int)
-queue_df["Next Arrival Time"] = queue_df["Next Arrival Time"].apply(lambda x: int(x) if x else '')
-queue_df["Next Service Completion Time"] = queue_df["Next Service Completion Time"].apply(lambda x: int(x) if x else '')
+# Convierte las columnas del dataframe a ints, y se encarga de los strings vacíos
+queue_df["Hora actual"] = queue_df["Hora actual"].astype(int)
+queue_df["Hora sig. llegada"] = queue_df["Hora sig. llegada"].apply(lambda x: int(x) if x else '')
+queue_df["Hora sig. fin de servicio"] = queue_df["Hora sig. fin de servicio"].apply(lambda x: int(x) if x else '')
 
-# Apply the formatting function to the time columns
-queue_df["Current Time"] = queue_df["Current Time"].apply(format_time)
-queue_df["Next Arrival Time"] = queue_df["Next Arrival Time"].apply(format_time)
-queue_df["Next Service Completion Time"] = queue_df["Next Service Completion Time"].apply(format_time)
+# Aplica la función de formateo de tiempo a las columnas de tiempo
+queue_df["Hora actual"] = queue_df["Hora actual"].apply(format_time)
+queue_df["Hora sig. llegada"] = queue_df["Hora sig. llegada"].apply(format_time)
+queue_df["Hora sig. fin de servicio"] = queue_df["Hora sig. fin de servicio"].apply(format_time)
 
-# Display the queue DataFrame when the "Simulate" button is clicked
-if st.button('Simulate'):
+# Muestra el dataframe cuando se hace clic al botón
+if st.button('Simular'):
     st.dataframe(queue_df)
