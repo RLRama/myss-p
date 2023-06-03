@@ -88,4 +88,4 @@ df = mm1_queue.run_simulation()
 
 # Print the dataframe
 if st.button('Simular'):
-    st.print(df)
+    st.write(df)
