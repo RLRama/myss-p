@@ -93,7 +93,7 @@ def format_time(seconds):
     return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
 
 # Crea un dataframe vacío para los eventos de la cola
-queue_df = pd.DataFrame(columns=["Hora actual", "Event", "Clientes en cola", "Hora sig. llegada", "Hora sig. fin de servicio"])
+queue_df = pd.DataFrame(columns=["Hora actual", "Evento", "Clientes en cola", "Hora sig. llegada", "Hora sig. fin de servicio"])
 
 # Definir función para manejar llegadas
 def handle_arrival(time, queue, arrival_interval):
