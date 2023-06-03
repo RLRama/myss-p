@@ -95,4 +95,5 @@ for t in range(queue_duration):
     queue_df.loc[len(queue_df) - 1, "Next Departure"] = next_departure
 
 # Print the queue DataFrame
-print(queue_df)
+if st.button('Simular'):
+    st.dataframe(queue_df)
