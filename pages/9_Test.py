@@ -66,18 +66,18 @@ def format_time(seconds):
     return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
 
 # Create an empty DataFrame to store the queue events
-queue_df = pd.DataFrame(columns=["Time", "Event", "Queue Size", "Next Arrival", "Next Departure"])
+queue_df = pd.DataFrame(columns=["Hora actual", "Evento", "Clientes en cola", "Hora sig. llegada", "Hora sig. fin de servicio"])
 
 # Define a function to handle arrivals
 def handle_arrival(time, queue, arrival_interval):
     queue.append(time)
-    queue_df.loc[len(queue_df)] = [time, "Arrival", len(queue), "", ""]
+    queue_df.loc[len(queue_df)] = [time, "Llegada", len(queue), "", ""]
 
 # Define a function to handle departures
 def handle_departure(time, queue, departure_interval):
     if len(queue) > 0:
         queue.pop(0)
-    queue_df.loc[len(queue_df)] = [time, "Departure", len(queue), "", ""]
+    queue_df.loc[len(queue_df)] = [time, "Fin de servicio", len(queue), "", ""]
 
 # Simulate the queue events
 queue = []
@@ -96,21 +96,21 @@ for t in range(1, queue_duration + 1):  # Start from 1 to skip the initial row
         handle_departure(t, queue, next_departure)
         next_departure += generate_random_number(serv_interval)
 
-    queue_df.loc[len(queue_df) - 1, "Next Arrival"] = next_arrival if t < next_arrival else ""
-    queue_df.loc[len(queue_df) - 1, "Next Departure"] = next_departure if t < next_departure else ""
+    queue_df.loc[len(queue_df) - 1, "Hora sig. llegada"] = next_arrival if t < next_arrival else ""
+    queue_df.loc[len(queue_df) - 1, "Hora sig. fin de servicio"] = next_departure if t < next_departure else ""
 
 # Reset the index of the DataFrame
 queue_df.reset_index(drop=True, inplace=True)
 
 # Convert the DataFrame columns to integers, handling empty strings
-queue_df["Time"] = queue_df["Time"].astype(int)
-queue_df["Next Arrival"] = queue_df["Next Arrival"].apply(lambda x: int(x) if x else '')
-queue_df["Next Departure"] = queue_df["Next Departure"].apply(lambda x: int(x) if x else '')
+queue_df["Hora actual"] = queue_df["Hora actual"].astype(int)
+queue_df["Hora sig. llegada"] = queue_df["Hora sig. llegada"].apply(lambda x: int(x) if x else '')
+queue_df["Hora sig. fin de servicio"] = queue_df["Hora sig. fin de servicio"].apply(lambda x: int(x) if x else '')
 
 # Apply the formatting function to the time columns
-queue_df["Time"] = queue_df["Time"].apply(format_time)
-queue_df["Next Arrival"] = queue_df["Next Arrival"].apply(format_time)
-queue_df["Next Departure"] = queue_df["Next Departure"].apply(format_time)
+queue_df["Hora actual"] = queue_df["Hora actual"].apply(format_time)
+queue_df["Hora sig. llegada"] = queue_df["Hora sig. llegada"].apply(format_time)
+queue_df["Hora sig. fin de servicio"] = queue_df["Hora sig. fin de servicio"].apply(format_time)
 
 if st.button('Simular'):
     st.dataframe(queue_df)
