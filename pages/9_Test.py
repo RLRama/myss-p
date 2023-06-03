@@ -86,9 +86,9 @@ def handle_departure(time, queue):
 queue = []
 
 for t in range(simulation_time):
-    if t % arr_interval == 0:  # Check if it's an arrival time
+    if t % generate_random_number(arr_interval, distribution) == 0:  # Check if it's an arrival time
         handle_arrival(t, queue)
-    if t % serv_interval == 0:  # Check if it's a departure time
+    if t % generate_random_number(serv_interval, distribution) == 0:  # Check if it's a departure time
         handle_departure(t, queue)
 
 if st.button('Simular'):
