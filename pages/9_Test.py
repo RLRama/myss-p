@@ -16,6 +16,22 @@ st.set_page_config(
     }
 )
 
+st.markdown(
+    """
+    ## Situación I
+    ### Descripción
+    - Problema I
+    - Tiempo de llegadas de cliente aleatorio (dentro de un intervalo dado)
+    - Cola FIFO (los clientes son atendidos en el orden que llegan)
+    - Tiempo de prestación de servicio aleatorio (dentro de un intervalo dado)
+    - El servidor no abandona el puesto de servicio
+
+    ### Uso
+    1. Configure parámetros usando la **👈 barra lateral**
+    2. Haga clic el botón **'Simular'** para generar la tabla de simulación
+    """
+)
+
 with st.sidebar:
     st.header("⌨️")
     st.subheader("Parámetros")
@@ -35,90 +51,58 @@ with st.sidebar:
     "Distribución a usar para generar los números aleatorios",
     ('uniforme', 'gaussiana'))
 
-st.markdown(
-    """
-    ## Situación I
-    ### Descripción
-    - Problema I
-    - Tiempo de llegadas de cliente aleatorio (dentro de un intervalo dado)
-    - Cola FIFO (los clientes son atendidos en el orden que llegan)
-    - Tiempo de prestación de servicio aleatorio (dentro de un intervalo dado)
-    - El servidor no abandona el puesto de servicio
+def generate_random_number(interval, distribution):
+    lower_bound = interval[0]
+    upper_bound = interval[1]
 
-    ### Uso
-    1. Configure parámetros usando la **👈 barra lateral**
-    2. Haga clic el botón **'Simular'** para generar la tabla de simulación
-    """
-)
-
-import random
-import pandas as pd
+    if distribution == 'uniforme':
+        return random.uniform(lower_bound, upper_bound)
+    elif distribution == 'gaussiana':
+        mean = (lower_bound + upper_bound) / 2
+        std_dev = (upper_bound - lower_bound) / 6  # Adjust the standard deviation based on the interval
+        return np.random.normal(mean, std_dev)
+    else:
+        raise ValueError("Invalid distribution specified.")
 
 def simulate_mm1_queue(arrival_rate, service_rate, simulation_time):
-  """
-  Simulates an M/M/1 queue.
+    event_list = []
+    time = 0
+    queue_size = 0
+    next_arrival_time = generate_random_number(arr_interval, distribution)
+    next_departure_time = np.inf
 
-  Args:
-    arrival_rate: The arrival rate of customers.
-    service_rate: The service rate of the server.
-    simulation_time: The length of the simulation.
+    while time < simulation_time:
+        if next_arrival_time < next_departure_time:
+            event_type = 'Arrival'
+            time = next_arrival_time
+            next_arrival_time += generate_random_number(arr_interval, distribution)
 
-  Returns:
-    A Pandas DataFrame containing the following columns:
-      iteration: The iteration number.
-      arrival_time: The time at which each customer arrives.
-      service_time: The time it takes to serve each customer.
-      wait_time: The time each customer waits in the queue.
-  """
+            if queue_size == 0:
+                next_departure_time = time + generate_random_number(serv_interval, distribution)
 
-  # Initialize the simulation state.
-  clock = 0
-  queue = []
-  customers = []
+            queue_size += 1
+        else:
+            event_type = 'Departure'
+            time = next_departure_time
+            next_departure_time = np.inf
 
-  # Simulate the arrival of customers.
-  for i in range(int(simulation_time / arrival_rate)):
-    arrival_time = clock + random.expovariate(arrival_rate)
-    clock += arrival_time
-    customers.append({
-      'iteration': i,
-      'arrival_time': arrival_time
-    })
+            if queue_size > 0:
+                queue_size -= 1
 
-  # Simulate the service of customers.
-  while customers:
-    service_time = random.expovariate(service_rate)
-    clock += service_time
-    customers.pop(0)
+            if queue_size > 0:
+                next_departure_time = time + generate_random_number(serv_interval, distribution)
 
-    # Calculate the wait time for the customer.
-    if queue:
-      wait_time = clock - queue.pop(0)['arrival_time']
-    else:
-      wait_time = 0
+        event_list.append({
+            'Time': time,
+            'Event': event_type,
+            'Queue Size': queue_size,
+            'Next Arrival Time': next_arrival_time,
+            'Next Departure Time': next_departure_time
+        })
 
-    # Add the customer's data to the DataFrame.
-    customers.append({
-      'iteration': i,
-      'arrival_time': arrival_time,
-      'service_time': service_time,
-      'wait_time': wait_time
-    })
+    df = pd.DataFrame(event_list)
+    return df
 
-  # Return the DataFrame.
-  return pd.DataFrame(customers)
-
-if __name__ == '__main__':
-  # Set the arrival rate and service rate.
-  arrival_rate = 1.0 / 10.0
-  service_rate = 1.0 / 5.0
-
-  # Set the simulation time.
-  simulation_time = 100.0
-
-  # Simulate the queue and print the results to a DataFrame.
 if st.button('Simular'):
-  df = simulate_mm1_queue(arrival_rate, service_rate, simulation_time)
-  print(df)
-
-# 
+    df = simulate_mm1_queue(arr_interval, serv_interval, simulation_time)
+    st.dataframe(df)
