@@ -64,6 +64,7 @@ def format_int_as_hh_mm_ss(int_time):
   Returns:
     A string representing the formatted time.
   """
+  int(int_time)
   # Convert the integer to a datetime object.
   datetime_obj = datetime.datetime.fromtimestamp(int_time)
   # Format the datetime object as hh:mm:ss.
