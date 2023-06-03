@@ -83,9 +83,9 @@ service_rate = 0.3
 num_customers = 1000
 
 # Create MM1Queue instance and run the simulation
-mm1_queue = MM1Queue(arrival_rate, service_rate, num_customers)
-df = mm1_queue.run_simulation()
 
 # Print the dataframe
 if st.button('Simular'):
+    mm1_queue = MM1Queue(arrival_rate, service_rate, num_customers)
+    df = mm1_queue.run_simulation()
     st.dataframe(df)
