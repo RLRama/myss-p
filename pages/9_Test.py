@@ -51,55 +51,61 @@ st.markdown(
     """
 )
 
-import pandas as pd
+def simulate_mm1_queue(arrival_rate, service_rate, simulation_time):
+  """
+  Simulates an M/M/1 queue.
 
-def single_server_queue_simulation(arrival_time, departure_time, num_iterations):
-    queue = []
-    wait_times = []
-    arrival_times = []
-    departure_times = []
+  Args:
+    arrival_rate: The arrival rate of customers.
+    service_rate: The service rate of the server.
+    simulation_time: The length of the simulation.
 
-    current_time = 0
-    departure = departure_time
-    num_customers = 0
+  Returns:
+    A Pandas DataFrame containing the following columns:
+      arrival_time: The time at which each customer arrives.
+      service_time: The time it takes to serve each customer.
+      wait_time: The time each customer waits in the queue.
+  """
 
-    for i in range(num_iterations):
-        if current_time == departure:
-            num_customers -= 1
-            if queue:
-                departure = current_time + departure_time
-                wait_times.append(current_time - queue.pop(0))
-                departure_times.append(departure)
-            else:
-                departure = float('inf')
-        if current_time == arrival_time:
-            num_customers += 1
-            if num_customers == 1:
-                departure = current_time + departure_time
-            queue.append(current_time)
-            arrival_time += arrival_time
+  # Initialize the simulation state.
+  clock = 0
+  queue = []
+  customers = []
 
-        current_time = min(arrival_time, departure)
-        arrival_times.append(arrival_time)
+  # Simulate the arrival of customers.
+  while clock < simulation_time:
+    arrival_time = random.expovariate(arrival_rate)
+    clock += arrival_time
+    customers.append(arrival_time)
 
-    data = {
-        'Iteration': list(range(1, num_iterations+1)),
-        'Arrival Time': arrival_times,
-        'Departure Time': departure_times,
-        'Wait Time': wait_times
-    }
-    df = pd.DataFrame(data)
-    return df
+  # Simulate the service of customers.
+  while customers:
+    service_time = random.expovariate(service_rate)
+    clock += service_time
+    customers.pop(0)
 
-# Simulation parameters
-arrival_time = 2
-departure_time = 3
-num_iterations = 10
+    # Calculate the wait time for the customer.
+    if queue:
+      wait_time = clock - queue.pop(0)
+    else:
+      wait_time = 0
 
-# Run simulation and print dataframe
+    # Add the customer's data to the DataFrame.
+    customers.append({
+      'arrival_time': arrival_time,
+      'service_time': service_time,
+      'wait_time': wait_time
+    })
+
+  # Return the DataFrame.
+  return pd.DataFrame(customers)
 
 
-# Print the dataframe
+arrival_rate = 1.0 / 10.0
+service_rate = 1.0 / 5.0
+simulation_time = 100.0
+
+  # Simulate the queue and print the results to a DataFrame.
 if st.button('Simular'):
-    simulation_df = single_server_queue_simulation(arrival_time, departure_time, num_iterations)
-    st.dataframe(simulation_df)
+    df = simulate_mm1_queue(arrival_rate, service_rate, simulation_time)
+    st.dataframe(df)
