@@ -92,7 +92,7 @@ def mm1_simulation(arrival_rate, service_rate, simulation_time):
 # Example usage
 arrival_rate = 0.5
 service_rate = 0.6
-simulation_time = 10.0
+simulation_time = 100.0
 
 if st.button('Simular'):
     simulation_df = mm1_simulation(arrival_rate, service_rate, simulation_time)
