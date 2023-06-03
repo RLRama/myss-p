@@ -19,11 +19,11 @@ st.set_page_config(
 with st.sidebar:
     st.header("⌨️")
     st.subheader("Configurar parámetros")
-    arrival_rate = st.slider(
+    arr_interval = st.slider(
         "Intervalo entre llegadas de clientes `(min)`",
         0.0, 100.0, (25.0, 75.0)
     )
-    service_rate = st.slider(
+    serv_interval = st.slider(
         "Intervalo de tiempo de servicio `(min)`",
         0.0, 100.0, (25.0, 75.0)
     )
@@ -54,28 +54,35 @@ st.markdown(
 import numpy as np
 import pandas as pd
 
-def mm1_simulation(arrival_rate, service_rate, num_iterations):
-    interarrival_times = np.random.exponential(scale=1 / arrival_rate, size=num_iterations)
-    service_times = np.random.exponential(scale=1 / service_rate, size=num_iterations)
+import numpy as np
+import pandas as pd
 
-    arrival_times = np.cumsum(interarrival_times)
-    service_starts = np.zeros(num_iterations)
-    wait_times = np.zeros(num_iterations)
-    departure_times = np.zeros(num_iterations)
+def mm1_simulation(arrival_rate, service_rate, simulation_time):
+    interarrival_times = np.random.exponential(scale=1 / arrival_rate)
+    service_times = np.random.exponential(scale=1 / service_rate)
 
-    for i in range(1, num_iterations):
-        service_starts[i] = max(arrival_times[i], departure_times[i-1])
-        wait_times[i] = service_starts[i] - arrival_times[i]
-        departure_times[i] = service_starts[i] + service_times[i]
+    arrival_times = [interarrival_times]
+    service_starts = [arrival_times[0]]
+    wait_times = [0]
+    departure_times = [service_starts[0] + service_times]
+
+    while departure_times[-1] < simulation_time:
+        interarrival_times = np.random.exponential(scale=1 / arrival_rate)
+        service_times = np.random.exponential(scale=1 / service_rate)
+
+        arrival_times.append(arrival_times[-1] + interarrival_times)
+        service_starts.append(max(arrival_times[-1], departure_times[-1]))
+        wait_times.append(service_starts[-1] - arrival_times[-1])
+        departure_times.append(service_starts[-1] + service_times)
 
     data = {
-        'Iteration': range(num_iterations),
-        'Interarrival Time': interarrival_times,
-        'Arrival Time': arrival_times,
+        'Iteration': range(len(arrival_times)),
+        'Interarrival Time': np.diff([0] + arrival_times),
+        'Arrival Time': arrival_times[:-1],
         'Service Time': service_times,
-        'Service Start': service_starts,
-        'Wait Time': wait_times,
-        'Departure Time': departure_times
+        'Service Start': service_starts[:-1],
+        'Wait Time': wait_times[:-1],
+        'Departure Time': departure_times[:-1]
     }
 
     df = pd.DataFrame(data)
@@ -85,10 +92,8 @@ def mm1_simulation(arrival_rate, service_rate, num_iterations):
 # Example usage
 arrival_rate = 0.5
 service_rate = 0.6
-num_iterations = 10
-
-
+simulation_time = 10.0
 
 if st.button('Simular'):
-    simulation_df = mm1_simulation(arrival_rate, service_rate, num_iterations)
+    simulation_df = mm1_simulation(arrival_rate, service_rate, simulation_time)
     st.dataframe(simulation_df)
