@@ -93,11 +93,7 @@ queue_df = pd.DataFrame(columns=["Hora actual", "Evento", "Clientes en cola", "H
 def handle_arrival(time, queue, arrival_interval, service_interval):
     """Añade un cliente a la cola cuando el evento es de llegada."""
     queue.append(time)
-    queue_df.loc[len(queue_df)] = [time, "Llegada", len(queue), "", "", ""]
-
-    if len(queue) == 1:
-        next_departure = time + generate_random_number(service_interval)
-        queue_df.loc[len(queue_df) - 1, "Hora sig. fin de servicio"] = next_departure
+    queue_df.loc[len(queue_df)] = [time, "Llegada", len(queue), "", "", False]
 
 
 def handle_departure(time, queue, departure_interval, break_interval):
@@ -122,7 +118,7 @@ queue = []
 
 # Inicializa la cola con el tamaño inicial
 queue.extend([0] * initial_queue_size)
-queue_df.loc[len(queue_df)] = [0, "", len(queue), "", ""]
+queue_df.loc[len(queue_df)] = [0, "", len(queue), "", "", False]
 
 next_arrival = generate_random_number(arr_interval)
 next_departure = float("inf")  # Inicialmente no hay servicio en curso
