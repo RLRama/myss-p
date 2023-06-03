@@ -51,8 +51,6 @@ st.markdown(
     """
 )
 
-import random
-
 def mm1_simulation(arrival_rate, service_rate, simulation_time):
     clock = 0
     queue = 0
