@@ -38,7 +38,7 @@ num_customers = 10  # Number of customers to simulate
 with st.sidebar:
     st.header("⌨️")
     st.subheader("Parámetros")
-    # Entrada para el intervalo entre llegadas de clientes
+    # Entrada para el intervalo de retraso por la zona de seguridad
     delay_mean = st.slider(
         "Intervalo de tiempo entre llegadas (seg)",
         1, 100, (25, 75)
