@@ -40,7 +40,7 @@ with st.sidebar:
     st.subheader("Parámetros")
     # Entrada para el intervalo de retraso por la zona de seguridad
     delay_mean = st.slider(
-        "Intervalo de tiempo entre llegadas (seg)",
+        "Intervalo de de retraso por la zona de seguridad (seg)",
         1, 100, (25, 75)
     )
     # Entrada para el tiempo de trabajo
