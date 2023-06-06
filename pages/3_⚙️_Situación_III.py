@@ -2,7 +2,7 @@ import streamlit as st
 import random as np
 import pandas as pd
 import simpy
-import numpy
+import numpy as np
 import datetime
 
 # Configurar página de Streamlit
