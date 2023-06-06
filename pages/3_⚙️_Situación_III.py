@@ -3,7 +3,7 @@ import random as np
 import pandas as pd
 import simpy
 import numpy as np
-import datetime
+from datetime import datetime
 
 # Configurar página de Streamlit
 st.set_page_config(
