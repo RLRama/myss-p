@@ -76,7 +76,7 @@ def customer(env, server, arrival_rate, service_rate, interruption_rate, queue_s
         # Evento de llegada de cliente
         yield env.timeout(generate_random_number(arrival_rate))
         arrival_time = env.now
-        data.append([arrival_time, 'Customer Arrival', queue_size.count])
+        data.append([arrival_time, 'Llegada de cliente', queue_size.count])
         
         with server.request() as req:
             # Esperar a que el servidor esté libre
@@ -88,13 +88,13 @@ def customer(env, server, arrival_rate, service_rate, interruption_rate, queue_s
         if np.random.rand() < interruption_rate:
             interruption_duration = generate_random_number(interruption_interval)
             interruption_start = env.now
-            data.append([interruption_start, 'Interruption Start', queue_size.count])
+            data.append([interruption_start, 'Inicio de interrupción', queue_size.count])
             yield env.timeout(interruption_duration)
             interruption_end = env.now
-            data.append([interruption_end, 'Interruption End', queue_size.count])
+            data.append([interruption_end, 'Fin de interrupción', queue_size.count])
         
         # Grabar evento de fin de servicio
-        data.append([env.now, 'Customer Served', queue_size.count])
+        data.append([env.now, 'Fin de servicio', queue_size.count])
 
 def queue_size(env, server):
     while True:
