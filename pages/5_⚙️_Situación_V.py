@@ -99,8 +99,10 @@ df = pd.DataFrame(columns=['Cliente', 'Tipo de evento', 'Hora actual', 'Tiempo d
 # Iniciar el proceso de generador de clientes
 env.process(customer_generator(env, server, delay_mean, service_time_mean, num_customers, df))
 
-# Ejecutar la simulación
-env.run()
+
 
 # Mostrar el dataframe
-print(df)
+if st.button('Simular'):
+    # Ejecutar la simulación
+    env.run()
+    st.dataframe(df)
