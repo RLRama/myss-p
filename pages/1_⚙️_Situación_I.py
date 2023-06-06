@@ -1,9 +1,6 @@
 import streamlit as st
 import random
-import numpy as np
 import pandas as pd
-import math
-import datetime
 
 # Configurar página de Streamlit
 st.set_page_config(
