@@ -49,7 +49,8 @@ with st.sidebar:
     # Entrada para la cant. de interrupciones
     interruption_rate = st.number_input(
         "Interrupciones por segundo",
-        min_value=0.5
+        value=0.5,
+        min_value=0.01
     )
     #S
     interruption_interval = st.slider(
