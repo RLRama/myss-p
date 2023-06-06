@@ -97,12 +97,6 @@ class MM1Queue:
         self.env.process(self.customer_abandonment())
         self.env.run(until=sim_time)
         
-        avg_wait_time = self.total_wait_time / self.total_customers
-        st.text("Simulation Results")
-        st.text("Average Wait Time: {:.2f}".format(avg_wait_time))
-        st.text("Total Customers Served: {}".format(self.total_customers))
-        st.text("Queue Length: {}".format(self.queue_length))
-        
         # Crear dataframe a partir de los eventos
         df = pd.DataFrame(self.events, columns=['Tipo de evento', 'Hora actual', 'Cliente', 'Cantidad de clientes en cola'])
         df['Hora actual'] = df['Hora actual'].apply(lambda x: datetime.utcfromtimestamp(x).strftime('%H:%M:%S'))
