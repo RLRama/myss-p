@@ -37,7 +37,6 @@ st.markdown(
 with st.sidebar:
     st.header("⌨️")
     st.subheader("Parámetros")
-    st.caption('La distribución para la generación de números aleatorios es exponencial')
     # Entrada para el intervalo entre llegadas de clientes
     ARRIVAL_RATE = st.slider(
         "Intervalo de tiempo entre llegadas (seg)",
