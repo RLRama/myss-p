@@ -60,7 +60,7 @@ with st.sidebar:
     # Entrada para la duración de simulación
     sim_time = st.number_input(
         "Tiempo de simulación (seg)",
-        min_value=1
+        min_value=1, value=20
     )
 
     
@@ -118,6 +118,8 @@ def simulate_m_m_1_queue(arrival_rate, service_rate, interruption_rate, sim_time
     
     # Convertir la lista de datos a un dataframe
     df = pd.DataFrame(data[1:], columns=data[0])
+    df['Hora actual'] = pd.to_datetime(df['Hora actual'], unit='s')
+    df['Hora actual'] = df['Hora actual'].dt.strftime('%H:%M:%S')
     return df
 
 # Realizar simulación

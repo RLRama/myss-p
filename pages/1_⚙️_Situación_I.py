@@ -49,7 +49,7 @@ with st.sidebar:
     # Entrada para la duración de simulación
     queue_duration = st.number_input(
         "Tiempo de simulación (seg)",
-        min_value=1
+        min_value=1, value=20
     )
     
     # Entrada para tamaño inicial de cola
