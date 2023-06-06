@@ -68,7 +68,7 @@ class MM1Queue:
         self.queue_length = 0
         self.total_customers = 0
         self.total_wait_time = 0.0
-        self.events = []  # List to store events
+        self.events = []  # Lista para almacenar eventos
     
     def customer_arrival(self):
         while True:
@@ -76,41 +76,33 @@ class MM1Queue:
             self.total_customers += 1
             customer = self.total_customers
             self.queue_length += 1
-            self.events.append(('Arrival', self.env.now, customer, self.queue_length))
+            self.events.append(('Llegada', self.env.now, customer, self.queue_length))
             self.env.process(self.serve_customer(customer))
     
     def serve_customer(self, customer):
         yield self.env.timeout(np.random.exponential(1 / self.service_rate))
-        self.queue_length = max(0, self.queue_length - 1)  # Ensure queue length is non-negative
+        self.queue_length = max(0, self.queue_length - 1)  # Asegurarse que el largo de cola no sea negativo
         self.total_wait_time += self.env.now
-        self.events.append(('Service Completion', self.env.now, customer, self.queue_length))
+        self.events.append(('Fin de servicio', self.env.now, customer, self.queue_length))
     
     def customer_abandonment(self):
         while True:
             yield self.env.timeout(np.random.exponential(1 / self.abandonment_rate))
             if self.queue_length > 0:
-                self.queue_length = max(0, self.queue_length - 1)  # Ensure queue length is non-negative
-                self.events.append(('Abandonment', self.env.now, None, self.queue_length))
+                self.queue_length = max(0, self.queue_length - 1)  # Asegurarse que el largo de cola no sea negativo
+                self.events.append(('Abandono de cola', self.env.now, None, self.queue_length))
     
     def run_simulation(self, sim_time):
         self.env.process(self.customer_arrival())
         self.env.process(self.customer_abandonment())
         self.env.run(until=sim_time)
         
-        avg_wait_time = self.total_wait_time / self.total_customers
-        print("Simulation Results")
-        print("Average Wait Time: {:.2f}".format(avg_wait_time))
-        print("Total Customers Served: {}".format(self.total_customers))
-        print("Queue Length: {}".format(self.queue_length))
-        
-        # Create dataframe from events
-        df = pd.DataFrame(self.events, columns=['Event', 'Time', 'Customer', 'Queue Length'])
-        df['Time'] = df['Time'].apply(lambda x: datetime.utcfromtimestamp(x).strftime('%H:%M:%S'))
-        
-        print("\nEvent Log:")
+        # Crear dataframe a partir de eventos
+        df = pd.DataFrame(self.events, columns=['Tipo de evento', 'Hora actual', 'Cliente', 'Cantidad de clientes en cola'])
+        df['Hora actual'] = df['Hora actual'].apply(lambda x: datetime.utcfromtimestamp(x).strftime('%H:%M:%S'))
         st.dataframe(df)
 
-# Create and run the simulation
+# Crear y ejecutar simulación
 if st.button('Simular'):
     env = simpy.Environment()
     queue = MM1Queue(env, arrival_rate, service_rate, abandonment_rate)
