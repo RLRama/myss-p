@@ -89,7 +89,7 @@ def customer_generator(env, priority_queue, regular_queue, events):
             regular_queue.put(customer)
         
         events.append({
-            'Tipo de evento': 'Customer Arrival',
+            'Tipo de evento': 'Llegada',
             'ID de cliente': customer.id,
             'Prioridad': customer.priority,
             'Hora actual': format_time(env.now),
@@ -104,7 +104,7 @@ def server(env, priority_queue, regular_queue, events):
             service_time = generate_random_number(SERVICE_RATE)
             yield env.timeout(service_time)
             events.append({
-                'Tipo de evento': 'Service Start',
+                'Tipo de evento': 'Inicio de servicio',
                 'ID de cliente': customer.id,
                 'Prioridad': customer.priority,
                 'Hora actual': format_time(env.now),
@@ -112,7 +112,7 @@ def server(env, priority_queue, regular_queue, events):
                 'Cantidad de clientes en cola regular': regular_queue.qsize()
             })
             events.append({
-                'Tipo de evento': 'Departure',
+                'Tipo de evento': 'Fin de servicio',
                 'ID de cliente': customer.id,
                 'Prioridad': customer.priority,
                 'Hora actual': format_time(env.now),
@@ -124,7 +124,7 @@ def server(env, priority_queue, regular_queue, events):
             service_time = generate_random_number(SERVICE_RATE)
             yield env.timeout(service_time)
             events.append({
-                'Tipo de evento': 'Service Start',
+                'Tipo de evento': 'Inicio de servicio',
                 'ID de cliente': customer.id,
                 'Prioridad': customer.priority,
                 'Hora actual': format_time(env.now),
@@ -132,7 +132,7 @@ def server(env, priority_queue, regular_queue, events):
                 'Cantidad de clientes en cola regular': regular_queue.qsize()
             })
             events.append({
-                'Tipo de evento': 'Departure',
+                'Tipo de evento': 'Fin de servicio',
                 'ID de cliente': customer.id,
                 'Prioridad': customer.priority,
                 'Hora actual': format_time(env.now),
