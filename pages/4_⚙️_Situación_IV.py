@@ -45,7 +45,7 @@ with st.sidebar:
     )
     # Entrada para el tiempo de trabajo
     SERVICE_RATE = st.slider(
-        "Intervalo de tiempo entre llegadas (seg)",
+        "Intervalo de tiempo de trabajo (seg)",
         1, 100, (25, 75)
     )
     # Entrada para la duración de simulación
@@ -101,7 +101,7 @@ def server(env, priority_queue, regular_queue, events):
     while True:
         if priority_queue:
             customer = priority_queue.pop(0)
-            service_time = random.expovariate(1 / SERVICE_RATE)
+            service_time = generate_random_number(SERVICE_RATE)
             yield env.timeout(service_time)
             events.append({
                 'Tipo de evento': 'Service Start',
@@ -121,7 +121,7 @@ def server(env, priority_queue, regular_queue, events):
             })
         elif not regular_queue.empty():
             customer = regular_queue.get()
-            service_time = random.expovariate(1 / SERVICE_RATE)
+            service_time = generate_random_number(SERVICE_RATE)
             yield env.timeout(service_time)
             events.append({
                 'Tipo de evento': 'Service Start',
