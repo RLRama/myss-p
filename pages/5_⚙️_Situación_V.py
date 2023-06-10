@@ -30,10 +30,6 @@ st.markdown(
     """
 )
 
-delay_mean = 1.0  # Mean delay before reaching the server
-service_time_mean = 0.8  # Mean service time
-num_customers = 10  # Number of customers to simulate
-
 # Mostrar parámetros en la barra lateral
 with st.sidebar:
     st.header("⌨️")
