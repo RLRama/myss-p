@@ -99,14 +99,32 @@ queue_df.loc[len(queue_df)] = [0, "", len(queue), "", ""]
 next_arrival = generate_random_number(arr_interval)
 next_departure = generate_random_number(serv_interval)
 
+# Define a variable to keep track of the continuous service time
+continuous_service_time = 0
+
+# Define a variable to store the duration of interruptions
+interruption_duration = 300  # 5 minutes in seconds
+
 # Bucle principal de la simulación
 for t in range(1, queue_duration + 1):  # Salta la primera fila
     if t == next_arrival:
         handle_arrival(t, queue, next_arrival)
         next_arrival += generate_random_number(arr_interval)
+    
     if t == next_departure:
+        continuous_service_time += 1  # Increase the continuous service time
         handle_departure(t, queue, next_departure)
         next_departure += generate_random_number(serv_interval)
+        
+        if continuous_service_time >= 3600:  # Check if continuous service time reaches 3600 seconds
+            continuous_service_time = 0  # Reset continuous service time
+            t += interruption_duration  # Skip the interruption duration
+            
+            # Add an interruption event to the queue_df
+            queue_df.loc[len(queue_df)] = [t, "Interruption", len(queue), "", ""]
+        
+    else:
+        continuous_service_time = 0  # Reset continuous service time
 
     # Actualiza los tiempos de salida y llegada en el dataframe
     queue_df.loc[len(queue_df) - 1, "Hora sig. llegada"] = next_arrival if t < next_arrival else ""
