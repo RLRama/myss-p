@@ -89,10 +89,15 @@ def handle_departure(time, queue, departure_interval):
         queue.pop(0)
     queue_df.loc[len(queue_df)] = [time, "Fin de servicio", len(queue), "", ""]
     
+    global next_departure  # Declare next_departure as a global variable
+    
     if continuous_service_time >= 3600:  # Check if continuous service time reaches 3600 seconds
         continuous_service_time = 0  # Reset continuous service time
         interruption_time = time + interruption_duration  # Calculate the interruption time
         queue_df.loc[len(queue_df)] = [interruption_time, "Interrupción", len(queue), "", ""]
+        next_departure = interruption_time + generate_random_number(serv_interval)  # Schedule the next departure after the interruption
+    else:
+        next_departure += generate_random_number(serv_interval)  # Schedule the next departure as usual
 
 
 # Simula los eventos de cola
