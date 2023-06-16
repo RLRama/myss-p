@@ -100,7 +100,6 @@ def handle_departure(time, queue, departure_interval):
         queue.pop(0)
     queue_df.loc[len(queue_df)] = [time, "Fin de servicio", len(queue), "", ""]
 
-
 # Simula los eventos de cola
 queue = []
 
@@ -111,11 +110,11 @@ queue_df.loc[len(queue_df)] = [0, "", len(queue), "", ""]
 next_arrival = generate_random_number(arr_interval)
 next_departure = generate_random_number(serv_interval)
 
-# Define a variable to keep track of the continuous service time
+# Variable para seguir el tiempo continuo de serv.
 continuous_service_time = 0
 
-# Define a variable to store the duration of interruptions
-interruption_duration = 300  # 5 minutes in seconds
+# Variable para almacenar duración de interrupciones
+interruption_duration = 300  # 5 minutos en segundos
 
 # Bucle principal de la simulación
 for t in range(1, queue_duration + 1):  # Salta la primera fila
@@ -124,24 +123,24 @@ for t in range(1, queue_duration + 1):  # Salta la primera fila
         next_arrival += generate_random_number(arr_interval)
 
     if t == next_departure:
-        continuous_service_time += 1  # Increase the continuous service time
+        continuous_service_time += 1  # Incrementar el contador de t. continuo
         handle_departure(t, queue, next_departure)
 
-        if continuous_service_time >= 3600:  # Check if continuous service time reaches 3600 seconds
-            continuous_service_time = 0  # Reset continuous service time
-            interruption_time = t + interruption_duration  # Calculate the interruption time
+        if continuous_service_time >= 3600:  # Comprobar si el tiempo continuo llego a 3600 s (1 h.)
+            continuous_service_time = 0  # Reiniciar contador de tiempo continuo de operación
+            interruption_time = t + interruption_duration  # Calcular tiempo de interrupción
             queue_df.loc[len(queue_df)] = [interruption_time, "Interrupción", len(queue), "", ""]
-            next_departure = interruption_time + generate_random_number(serv_interval)  # Schedule next departure after interruption
+            next_departure = interruption_time + generate_random_number(serv_interval)  # Programar siguiente salida tras interrupción
         else:
             next_departure += generate_random_number(serv_interval)  # Schedule next departure as usual
 
-            if continuous_service_time % 3600 == 0:  # Check if continuous service time is a multiple of 3600 seconds
-                interruption_time = t + interruption_duration  # Calculate the interruption time
+            if continuous_service_time % 3600 == 0:  # Revisar si tiempo continuo es multiplo de 1 hora
+                interruption_time = t + interruption_duration  # Calcular tiempo de interrupción
                 queue_df.loc[len(queue_df)] = [interruption_time, "Interrupción", len(queue), "", ""]
-                next_departure = interruption_time + generate_random_number(serv_interval)  # Schedule next departure after interruption
+                next_departure = interruption_time + generate_random_number(serv_interval)  # Programar siguiente salida tras interrupción
 
     else:
-        continuous_service_time = 0  # Reset continuous service time
+        continuous_service_time = 0  # Reiniciar contador de tiempo continuo de operación
 
     # Actualiza los tiempos de salida y llegada en el dataframe
     queue_df.loc[len(queue_df) - 1, "Hora sig. llegada"] = format_time(next_arrival) if t < next_arrival else ""
