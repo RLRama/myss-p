@@ -293,9 +293,6 @@ st.markdown(
 # VectorInicial()
 # Simulacion()
 
-import streamlit as st
-import random
-import datetime as dt
 
 import random
 import datetime as dt
