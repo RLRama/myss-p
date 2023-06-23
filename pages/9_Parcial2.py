@@ -69,7 +69,7 @@ def generar_intervalo_llegada(intervalo):
 
 
 def llegada_pieza(env, server, intervalo_llegada, tiempo_produccion, tiempo_total, contador_piezas, tiempo_espera, piezas_producidas, data):
-    while True:
+    while tiempo_total < sim_time:
         # Evento de llegada de pieza
         yield env.timeout(generar_intervalo_llegada(intervalo_llegada))
         intervalo_llegada = generar_intervalo_llegada(intervalo_llegada)
@@ -84,37 +84,33 @@ def llegada_pieza(env, server, intervalo_llegada, tiempo_produccion, tiempo_tota
                 piezas_producidas += 1
         else:
             contador_piezas += 1
-            tiempo_espera += tiempo_total - tiempo_espera
 
         # Grabar evento de llegada de pieza en el DataFrame
         data.append([tiempo_total, 'Llegada de pieza', contador_piezas, tiempo_espera, piezas_producidas])
 
+    # Completar el servicio de las piezas restantes
+    while contador_piezas > 0:
+        tiempo_total += 1
 
-def fin_servicio(env, server, tiempo_produccion, contador_piezas, tiempo_total, tiempo_espera, piezas_producidas, data):
-    while True:
         if tiempo_produccion > 0:
             tiempo_produccion -= 1
 
-        if tiempo_produccion == 0 and contador_piezas > 0:
+        if tiempo_produccion == 0:
             contador_piezas -= 1
             tiempo_espera += tiempo_total - tiempo_espera
             piezas_producidas += 1
 
-            # Grabar evento de fin de servicio en el DataFrame
-            data.append([tiempo_total, 'Fin de servicio', contador_piezas, tiempo_espera, piezas_producidas])
-
-            tiempo_produccion = 10
-
-        yield env.timeout(1)
+        # Grabar evento de fin de servicio en el DataFrame
+        data.append([tiempo_total, 'Fin de servicio', contador_piezas, tiempo_espera, piezas_producidas])
 
 
-def mantenimiento(env, server, tiempo_total, mantenimiento_intervalo, mantenimiento_duracion, data):
-    while True:
-        yield env.timeout(mantenimiento_intervalo)
+def mantenimiento(env, server, tiempo_total, intervalo_mantenimiento, duracion_mantenimiento, data):
+    while tiempo_total < sim_time:
+        yield env.timeout(intervalo_mantenimiento)
         st.write("Realizando mantenimiento...")
         st.write(f"Número de piezas producidas hasta el momento: {data[-1][4]}")
         st.write("---------------------------------------")
-        yield env.timeout(mantenimiento_duracion)
+        yield env.timeout(duracion_mantenimiento)
         st.write("¡Mantenimiento completado!")
 
 
@@ -125,16 +121,14 @@ def simulate_queue(arrival_rate, service_rate, maintenance_interval, maintenance
     data = [['Tiempo actual', 'Tipo de evento', 'Tamaño de cola', 'Tiempo de espera acumulado', 'Piezas producidas']]
 
     tiempo_total = 0
+    intervalo_llegada = generar_intervalo_llegada(arrival_rate)
     tiempo_produccion = 0
     contador_piezas = 0
     tiempo_espera = 0
     piezas_producidas = 0
 
     # Proceso de llegada de piezas
-    env.process(llegada_pieza(env, server, arrival_rate, service_rate, tiempo_total, contador_piezas, tiempo_espera, piezas_producidas, data))
-
-    # Proceso de finalización de servicio
-    env.process(fin_servicio(env, server, tiempo_produccion, contador_piezas, tiempo_total, tiempo_espera, piezas_producidas, data))
+    env.process(llegada_pieza(env, server, intervalo_llegada, tiempo_produccion, tiempo_total, contador_piezas, tiempo_espera, piezas_producidas, data))
 
     # Proceso de mantenimiento
     if maintenance_interval <= sim_time:
