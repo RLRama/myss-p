@@ -65,7 +65,9 @@ with st.sidebar:
 
 def generar_intervalo_llegada(intervalo):
     """Genera un intervalo de llegada aleatorio dentro del intervalo dado"""
-    return random.randint(intervalo[0], intervalo[1])
+    lower_bound = intervalo[0]
+    upper_bound = intervalo[1]
+    return random.randint(lower_bound, upper_bound)
 
 
 def llegada_pieza(env, server, intervalo_llegada, tiempo_produccion, tiempo_total, contador_piezas, tiempo_espera, piezas_producidas, data):
@@ -121,14 +123,15 @@ def simulate_queue(arrival_rate, service_rate, maintenance_interval, maintenance
     data = [['Tiempo actual', 'Tipo de evento', 'Tamaño de cola', 'Tiempo de espera acumulado', 'Piezas producidas']]
 
     tiempo_total = 0
-    intervalo_llegada = generar_intervalo_llegada(arrival_rate)
+    intervalo_llegada = [arrival_rate[0], arrival_rate[1]]
     tiempo_produccion = 0
     contador_piezas = 0
     tiempo_espera = 0
     piezas_producidas = 0
 
     # Proceso de llegada de piezas
-    env.process(llegada_pieza(env, server, intervalo_llegada, tiempo_produccion, tiempo_total, contador_piezas, tiempo_espera, piezas_producidas, data))
+    env.process(llegada_pieza(env, server, intervalo_llegada, tiempo_produccion, tiempo_total, contador_piezas,
+                              tiempo_espera, piezas_producidas, data))
 
     # Proceso de mantenimiento
     if maintenance_interval <= sim_time:
