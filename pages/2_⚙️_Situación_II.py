@@ -55,7 +55,8 @@ with st.sidebar:
     #S
     interruption_interval = st.slider(
         "Intervalo de duración de interrupción (seg)",
-        1, 100, (25, 75)
+        value=0.5,
+        min_value=0.01
     )
     # Entrada para la duración de simulación
     sim_time = st.number_input(
