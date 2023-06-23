@@ -294,10 +294,9 @@ st.markdown(
 # Simulacion()
 
 
+import pandas as pd
 import random
 import datetime as dt
-import pandas as pd
-import streamlit as st
 
 QGral = QPrio = ZS = PS = T = caso = S = 0
 tLlegadaGrali = tLlegadaGralf = tLlegadaPrioi = tLlegadaPriof = tAtencióni = tAtenciónf = tDescansoi = tDescansof = tTrabajoi = tTrabajof = tAbandonoi = tAbandonof = tZS = contador = 0
@@ -305,26 +304,27 @@ horaActual = horaFinal = SigFinServicio = SigFinZona = SigLlegadaGral = SigLlega
 
 vAbandono = [horaFinal]
 
+
 def VectorInicial():
     global QGral, PS, T, contador, tLlegadaGrali, tLlegadaGralf, tAtencióni, tAtenciónf, S, tDescansoi, tDescansof, tTrabajoi, tTrabajof, SigFinServicio, SigLlegadaGral, SigLlegadaServ, SigSalidaServ, horaFinal, horaActual, tAbandonoi, tAbandonof, caso
-    st.write("Indique el tipo de simulación que quiere hacer:")
-    st.write("1 - Caso parcial")
-    caso = st.number_input("caso: ", min_value=1, max_value=1, step=1)
+    print("Indique el tipo de simulación que quiere hacer:")
+    print("1 - Caso parcial")
+    caso = int(input("caso: "))
 
-    aux = dt.timedelta(hours=int(st.text_input("Ingrese hora de inicio de la simulación: ")))
+    aux = dt.timedelta(hours=int(input("Ingrese hora de inicio de la simulación: ")))
     horaActual = horaActual + aux
-    QGral = int(st.text_input("Ingrese la cantidad inicial de clientes en cola: "))
-    PS = int(st.text_input("Ingrese el estado inicial del puesto de trabajo (ocupado = 1; libre = 0): "))
-    T = int(st.text_input("Ingrese la duración de la simulación (en minutos): "))
+    QGral = int(input("Ingrese la cantidad inicial de clientes en cola: "))
+    PS = int(input("Ingrese el estado inicial del puesto de trabajo (ocupado = 1; libre = 0): "))
+    T = int(input("Ingrese la duración de la simulación (en minutos): "))
     horaFinal = horaActual + dt.timedelta(minutes=T)
     SigFinServicio = SigFinZona = SigLlegadaGral = SigLlegadaPrio = SigLlegadaServ = SigSalidaServ = vAbandono[0] = horaFinal
 
-    st.write("Ingrese el intervalo que tarda el puesto de servicio en atender los clientes: ")
-    tAtencióni = int(st.text_input("Mínimo: "))
-    tAtenciónf = int(st.text_input("Máximo: "))
+    print("Ingrese el intervalo que tarda el puesto de servicio en atender los clientes:")
+    tAtencióni = int(input("Mínimo: "))
+    tAtenciónf = int(input("Máximo: "))
 
     if caso == 1:
-        # -----------Ajuste de variables-----------
+        # -----------Ajuste de vatriables-----------
         tAtencióni = 10
         tAtenciónf = 10
         tLlegadaGrali = 10
@@ -334,7 +334,8 @@ def VectorInicial():
         tTrabajoi = 60
         tTrabajof = 60
     else:
-        st.write("Error")
+        print("Error")
+
 
 def LlegadaCliente(case):
     a = random.randint(tAtencióni, tAtenciónf)
@@ -349,6 +350,7 @@ def LlegadaCliente(case):
             QGral = QGral + 1
         SigLlegadaGral = horaActual + dt.timedelta(seconds=b)
 
+
 def FinServicio():
     a = random.randint(tAtencióni, tAtenciónf)
     global QGral, PS, SigFinServicio, caso, contador
@@ -362,6 +364,7 @@ def FinServicio():
             PS = 0
             SigFinServicio = horaFinal
 
+
 def SalidaServidor():
     global S, SigLlegadaServ, SigFinServicio, SigSalidaServ
     a = random.randint(tDescansoi, tDescansof)
@@ -373,6 +376,7 @@ def SalidaServidor():
         FinServicio()
     SigSalidaServ = horaFinal
 
+
 def LlegadaServidor():
     a = random.randint(tTrabajoi, tTrabajof)
     global S, SigSalidaServ, SigLlegadaServ
@@ -380,13 +384,14 @@ def LlegadaServidor():
     SigSalidaServ = horaActual + dt.timedelta(minutes=a)
     SigLlegadaServ = horaFinal
 
+
 def Simulacion():
     global horaActual, PS, T, QGral, SigFinServicio, SigLlegadaGral, SigLlegadaServ, SigSalidaServ, S, contador
     LlegadaCliente("Gral")
 
     if caso == 1:
         LlegadaServidor()
-        st.write("{:<13}{:<24}{:<21}{:<24}{:<25}{:<6}{:<3}{:<4}".format(
+        print("{:<13}{:<24}{:<21}{:<24}{:<25}{:<6}{:<3}{:<4}".format(
             "Hora actual", "H.Prox llegada cliente", "H.Prox fin servicio", "H.Prox Salida servidor",
             "H.Prox Llegada servidor", "QGral", "PS", "S"))
         while True:
@@ -399,24 +404,33 @@ def Simulacion():
                 LlegadaServidor()
             elif min(SigFinServicio, SigLlegadaGral, SigLlegadaServ, SigSalidaServ) == SigSalidaServ:
                 SalidaServidor()
-            elif SigFinServicio == SigLlegadaGral == SigLlegadaServ == SigSalidaServ:
-                st.write("Error")
-                break
-
-            header = ["Hora actual", "H.Prox llegada cliente", "H.Prox fin servicio", "H.Prox Salida servidor",
-                      "H.Prox Llegada servidor", "QGral", "PS", "S"]
-            data = [[horaActual.hour, ":", horaActual.minute, SigLlegadaGral.hour, ":", SigLlegadaGral.minute,
-                     SigFinServicio.hour, ":", SigFinServicio.minute, SigSalidaServ.hour, ":", SigSalidaServ.minute,
-                     SigLlegadaServ.hour, ":", SigLlegadaServ.minute, QGral, PS, S]]
-            df = pd.DataFrame(data, columns=header)
-
-            st.dataframe(df)
-
+            elif SigFinServicio == SigLlegadaGral:
+                LlegadaCliente("Gral")
+            elif SigFinServicio == SigLlegadaServ:
+                LlegadaServidor()
+            elif SigFinServicio == SigSalidaServ:
+                SalidaServidor()
+            print("{:<13}{:<24}{:<21}{:<24}{:<25}{:<6}{:<3}{:<4}".format(
+                horaActual.strftime("%H:%M:%S"), SigLlegadaGral.strftime("%H:%M:%S"),
+                SigFinServicio.strftime("%H:%M:%S"), SigSalidaServ.strftime("%H:%M:%S"),
+                SigLlegadaServ.strftime("%H:%M:%S"), QGral, PS, S))
             if horaActual >= horaFinal:
-                st.write("-------------- Fin de la simulación -------------- ")
-                st.write("Cantidad de piezas producidas: ", contador)
                 break
-    return
+        promedio = (contador - 1) / (T / 60)
+        print("Tiempo promedio de espera en cola: ", promedio)
 
+
+# Ejecutar la simulación
 VectorInicial()
 Simulacion()
+
+# Crear el dataframe con los datos
+data = [[horaActual.strftime("%H:%M:%S"), SigLlegadaGral.strftime("%H:%M:%S"), SigFinServicio.strftime("%H:%M:%S"),
+         SigSalidaServ.strftime("%H:%M:%S"), SigLlegadaServ.strftime("%H:%M:%S"), QGral, PS, S]]
+
+header = ["Hora actual", "H.Prox llegada cliente", "H.Prox fin servicio", "H.Prox Salida servidor",
+          "H.Prox Llegada servidor", "QGral", "PS", "S"]
+
+df = pd.DataFrame(data, columns=header)
+print(df)
+
