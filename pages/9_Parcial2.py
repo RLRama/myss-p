@@ -1,6 +1,7 @@
 import streamlit as st
 import random
 import datetime as dt
+import pandas as pd
 
 # import simpy
 # import pandas as pd
@@ -397,7 +398,13 @@ def Simulacion():
             elif SigFinServicio == SigLlegadaGral == SigLlegadaServ == SigSalidaServ:
                 st.write("Error")
                 break
-            st.write("{:>2}{:<1}{:<10}{:>2}{:<1}{:<21}{:>2}{:<1}{:<18}{:>2}{:<1}{:<21}{:>2}{:<1}{:<22}{:<6}{:<3}{:<4}".format(horaActual.hour,":", horaActual.minute, SigLlegadaGral.hour,":", SigLlegadaGral.minute, SigFinServicio.hour,":", SigFinServicio.minute, SigSalidaServ.hour,":", SigSalidaServ.minute,  SigLlegadaServ.hour,":", SigLlegadaServ.minute, QGral, PS, S)) 
+            #st.write("{:>2}{:<1}{:<10}{:>2}{:<1}{:<21}{:>2}{:<1}{:<18}{:>2}{:<1}{:<21}{:>2}{:<1}{:<22}{:<6}{:<3}{:<4}".format(horaActual.hour,":", horaActual.minute, SigLlegadaGral.hour,":", SigLlegadaGral.minute, SigFinServicio.hour,":", SigFinServicio.minute, SigSalidaServ.hour,":", SigSalidaServ.minute,  SigLlegadaServ.hour,":", SigLlegadaServ.minute, QGral, PS, S)) 
+            header = ["Hora actual", "H.Prox llegada cliente", "H.Prox fin servicio", "H.Prox Salida servidor", "H.Prox Llegada servidor", "QGral", "PS", "S"]
+            data = [[horaActual.hour, ":", horaActual.minute, SigLlegadaGral.hour, ":", SigLlegadaGral.minute, SigFinServicio.hour, ":", SigFinServicio.minute, SigSalidaServ.hour, ":", SigSalidaServ.minute, SigLlegadaServ.hour, ":", SigLlegadaServ.minute, QGral, PS, S]]
+            df = pd.DataFrame(data, columns=header)
+
+            st.dataframe(df)
+            
             if horaActual >= horaFinal:
                 st.write("-------------- Fin de la simulación -------------- ") 
                 st.write("Cantidad de piezas producidas: ", contador)
