@@ -65,8 +65,7 @@ with st.sidebar:
 
 def generar_intervalo_llegada(intervalo):
     """Genera un intervalo de llegada aleatorio dentro del intervalo dado"""
-    lower_bound = intervalo[0]
-    upper_bound = intervalo[1]
+    lower_bound, upper_bound = intervalo
     return random.randint(lower_bound, upper_bound)
 
 
@@ -89,6 +88,24 @@ def llegada_pieza(env, server, intervalo_llegada, tiempo_produccion, tiempo_tota
 
         # Grabar evento de llegada de pieza en el DataFrame
         data.append([tiempo_total, 'Llegada de pieza', contador_piezas, tiempo_espera, piezas_producidas])
+
+        # Comenzar servicio si el servidor está disponible
+        if tiempo_produccion == 10 and server.count == 1:
+            tiempo_produccion -= 1
+            contador_piezas -= 1
+            tiempo_espera += tiempo_total - tiempo_espera
+            piezas_producidas += 1
+
+            # Grabar evento de inicio de servicio en el DataFrame
+            data.append([tiempo_total, 'Inicio de servicio', contador_piezas, tiempo_espera, piezas_producidas])
+
+            yield env.timeout(tiempo_produccion)
+
+            tiempo_total += tiempo_produccion
+            tiempo_produccion = 0
+
+            # Grabar evento de fin de servicio en el DataFrame
+            data.append([tiempo_total, 'Fin de servicio', contador_piezas, tiempo_espera, piezas_producidas])
 
     # Completar el servicio de las piezas restantes
     while contador_piezas > 0:
@@ -148,7 +165,9 @@ def simulate_queue(arrival_rate, service_rate, maintenance_interval, maintenance
     return df
 
 
-# Realizar simulación
-if st.button('Simular'):
-    df = simulate_queue(arrival_rate, service_rate, maintenance_interval, maintenance_duration, sim_time)
-    st.dataframe(df)
+# Simulación de la cola
+df = simulate_queue(arrival_rate, service_rate, maintenance_interval, maintenance_duration, sim_time)
+
+# Mostrar el DataFrame con los resultados
+st.subheader("Tabla de simulación")
+st.dataframe(df)
