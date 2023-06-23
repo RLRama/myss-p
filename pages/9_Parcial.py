@@ -15,13 +15,12 @@ st.set_page_config(
 
 st.markdown(
     """
-    ## Situación I
+    ## Situación Parcial
     ### Descripción
-    - Problema I
-    - Tiempo de llegadas de cliente aleatorio (dentro de un intervalo dado)
+    - Tiempo de llegadas de piezas aleatorio (dentro de un intervalo dado) [10-20 Segundos]
     - Cola FIFO (los clientes son atendidos en el orden que llegan)
-    - Tiempo de prestación de servicio aleatorio (dentro de un intervalo dado)
-    - El servidor no abandona el puesto de servicio
+    - Tiempo de prestación de servicio 10 Segundos
+    - El servidor abandona el servicio cada 1 hora y toma descanso de 5 minutos
 
     ### Uso
     1. Configure parámetros usando la **👈 barra lateral**
