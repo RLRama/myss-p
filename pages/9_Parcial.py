@@ -79,32 +79,48 @@ def format_time(seconds):
     return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
 
 
-# Crea un dataframe vacío para los eventos de la cola
-queue_df = pd.DataFrame(
-    columns=["Hora actual", "Evento", "Clientes en cola", "Hora sig. llegada", "Hora sig. fin de servicio"]
-)
-
+# Crea una lista de diccionarios para los eventos de la cola
+queue_events = []
 
 # Definir función para manejar llegadas
-def handle_arrival(time, queue, arrival_interval):
+def handle_arrival(time, queue):
     """Añade un cliente a la cola cuando el evento es de llegada."""
     queue.append(time)
-    queue_df.loc[len(queue_df)] = [time, "Llegada", len(queue), "", ""]
+    queue_events.append({
+        "Hora actual": time,
+        "Evento": "Llegada",
+        "Clientes en cola": len(queue),
+        "Hora sig. llegada": "",
+        "Hora sig. fin de servicio": ""
+    })
 
 
 # Definir función para manejar salidas
-def handle_departure(time, queue, departure_interval):
+def handle_departure(time, queue):
     """Quita un cliente de la cola cuando el evento es de salida."""
     if len(queue) > 0:
         queue.pop(0)
-    queue_df.loc[len(queue_df)] = [time, "Fin de servicio", len(queue), "", ""]
+    queue_events.append({
+        "Hora actual": time,
+        "Evento": "Fin de servicio",
+        "Clientes en cola": len(queue),
+        "Hora sig. llegada": "",
+        "Hora sig. fin de servicio": ""
+    })
+
 
 # Simula los eventos de cola
 queue = []
 
 # Inicializa la cola con el tamaño inicial
 queue.extend([0] * initial_queue_size)
-queue_df.loc[len(queue_df)] = [0, "", len(queue), "", ""]
+queue_events.append({
+    "Hora actual": 0,
+    "Evento": "",
+    "Clientes en cola": len(queue),
+    "Hora sig. llegada": "",
+    "Hora sig. fin de servicio": ""
+})
 
 next_arrival = generate_random_number(arr_interval)
 next_departure = generate_random_number(serv_interval)
@@ -118,45 +134,54 @@ interruption_duration = 300  # 5 minutos en segundos
 # Bucle principal de la simulación
 for t in range(1, queue_duration + 1):  # Salta la primera fila
     if t == next_arrival:
-        handle_arrival(t, queue, next_arrival)
+        handle_arrival(t, queue)
         next_arrival += generate_random_number(arr_interval)
 
     if t == next_departure:
         continuous_service_time += 1  # Incrementar el contador de t. continuo
-        handle_departure(t, queue, next_departure)
+        handle_departure(t, queue)
 
         if continuous_service_time >= 3600:  # Comprobar si el tiempo continuo llego a 3600 s (1 h.)
             continuous_service_time = 0  # Reiniciar contador de tiempo continuo de operación
             interruption_time = t + interruption_duration  # Calcular tiempo de interrupción
-            queue_df.loc[len(queue_df)] = [interruption_time, "Interrupción", len(queue), "", ""]
+            queue_events.append({
+                "Hora actual": interruption_time,
+                "Evento": "Interrupción",
+                "Clientes en cola": len(queue),
+                "Hora sig. llegada": "",
+                "Hora sig. fin de servicio": ""
+            })
             next_departure = interruption_time + generate_random_number(serv_interval)  # Programar siguiente salida tras interrupción
         else:
             next_departure += generate_random_number(serv_interval)  # Schedule next departure as usual
 
             if continuous_service_time % 3600 == 0:  # Revisar si tiempo continuo es multiplo de 1 hora
                 interruption_time = t + interruption_duration  # Calcular tiempo de interrupción
-                queue_df.loc[len(queue_df)] = [interruption_time, "Interrupción", len(queue), "", ""]
+                queue_events.append({
+                    "Hora actual": interruption_time,
+                    "Evento": "Interrupción",
+                    "Clientes en cola": len(queue),
+                    "Hora sig. llegada": "",
+                    "Hora sig. fin de servicio": ""
+                })
                 next_departure = interruption_time + generate_random_number(serv_interval)  # Programar siguiente salida tras interrupción
 
     else:
         continuous_service_time = 0  # Reiniciar contador de tiempo continuo de operación
 
-    # Actualiza los tiempos de salida y llegada en el dataframe
-    queue_df.loc[len(queue_df) - 1, "Hora sig. llegada"] = format_time(next_arrival) if t < next_arrival else ""
-    queue_df.loc[len(queue_df) - 1, "Hora sig. fin de servicio"] = format_time(next_departure) if t < next_departure else ""
+    # Actualiza los tiempos de salida y llegada en el último evento de la cola
+    queue_events[-1]["Hora sig. llegada"] = format_time(next_arrival) if t < next_arrival else ""
+    queue_events[-1]["Hora sig. fin de servicio"] = format_time(next_departure) if t < next_departure else ""
+
+# Crea el dataframe a partir de la lista de diccionarios
+queue_df = pd.DataFrame(queue_events)
 
 # Reinicia el índice del dataframe
 queue_df.reset_index(drop=True, inplace=True)
 
-# Convierte las columnas del dataframe a ints, y se encarga de los strings vacíos
-queue_df["Hora actual"] = queue_df["Hora actual"].astype(int)
-queue_df["Hora sig. llegada"] = queue_df["Hora sig. llegada"].apply(lambda x: int(x) if x else '')
-queue_df["Hora sig. fin de servicio"] = queue_df["Hora sig. fin de servicio"].apply(lambda x: int(x) if x else '')
-
 # Aplica la función de formateo de tiempo a las columnas de tiempo
-queue_df["Hora actual"] = queue_df["Hora actual"].apply(format_time)
-queue_df["Hora sig. llegada"] = queue_df["Hora sig. llegada"].apply(format_time)
-queue_df["Hora sig. fin de servicio"] = queue_df["Hora sig. fin de servicio"].apply(format_time)
+time_columns = ["Hora actual", "Hora sig. llegada", "Hora sig. fin de servicio"]
+queue_df[time_columns] = queue_df[time_columns].applymap(format_time)
 
 # Muestra el dataframe cuando se hace clic al botón
 if st.button('Simular'):
